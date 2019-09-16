@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="JadeLib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../JavaAgentLib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../JavaAgentLib" recursive="false" />
+  </library>
+</component>
