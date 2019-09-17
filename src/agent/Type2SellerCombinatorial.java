@@ -42,7 +42,7 @@ public class Type2SellerCombinatorial extends Agent{
     ArrayList<String> output = new ArrayList<String>();
     Random r = new Random();
     int biddingBehaviourRule = getRandomNumberInRange(0,2);
-    //ArrayList<Agents> informAgentList = new ArrayList<Agents>();
+    //int biddingBehaviourRule = 2;
     
     //Selling capacity (Maximum).
     double bestResult = 0.0;
@@ -289,16 +289,23 @@ public class Type2SellerCombinatorial extends Agent{
                      * Sending message to bidders with two types (Accept proposal or Refuse) based on
                      * accepted water volume to sell.
                      */
-                	
+                	String tempBehaviour= "";
+                	if(biddingBehaviourRule == 0){
+                	    tempBehaviour = "Generous";
+                    }else if(biddingBehaviourRule == 1){
+                	    tempBehaviour = "Neutral";
+                    }else {
+                	    tempBehaviour = "Covetous";
+                    }
                 	//Result Preparison.
-                	String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," +bestResult;
+                	String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + bestResult;
                 	int writCnt = 0;
                 	
                 	for (int i = 0; i <= replyInfoList.size() - 1; i++) {
                 		myGUI.displayUI("ertyuhygtrfr" + replyInfoList.get(i).status + "\n");
 						if(replyInfoList.get(i).status.equals("accept")) {
 							writingFileResult = writingFileResult + "," + replyInfoList.get(i).name + "," + replyInfoList.get(i).nameDB +
-									"," + replyInfoList.get(i).totalVolume + "," + replyInfoList.get(i).price;
+									"," + replyInfoList.get(i).totalVolume + "," + replyInfoList.get(i).price + "," + replyInfoList.get(i).pctPriceReduce;
 							writCnt++;
 						}
 						
@@ -535,7 +542,16 @@ public class Type2SellerCombinatorial extends Agent{
                      */
                 	
                 	//Result Preparison.
-                	String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," +bestResult;
+                    String tempBehaviour= "";
+                    if(biddingBehaviourRule == 0){
+                        tempBehaviour = "Generous";
+                    }else if(biddingBehaviourRule == 1){
+                        tempBehaviour = "Neutral";
+                    }else {
+                        tempBehaviour = "Covetous";
+                    }
+                    //Result Preparison.
+                    String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + bestResult;
                 	int writCnt = 0;
                 	
                 	for (int i = 0; i <= replyInfoList.size() - 1; i++) {
@@ -626,8 +642,6 @@ public class Type2SellerCombinatorial extends Agent{
         Dictionary<String, Double> volumnDict = new Hashtable<String, Double>();
         Dictionary<String, Double> priceDict = new Hashtable<String, Double>();
         Dictionary<String, Double> profitLossDict = new Hashtable<>();
-
-
         private int step = 0;
 
         public void action() {
@@ -693,11 +707,13 @@ public class Type2SellerCombinatorial extends Agent{
                             double tempValue = tempVolume * tempPrice;
 
                             //Covetous behaviour process for 5% reserved price setting.
-                            replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
-                            //adding data to dictionary
-                            volumnDict.put(reply.getSender().getLocalName(),tempVolume);
-                            priceDict.put(reply.getSender().getLocalName(),tempPrice);
-                            profitLossDict.put(reply.getSender().getLocalName(), tempProfitLossValue);
+                            if(tempPrice >= farmerInfo.sellingPrice + farmerInfo.sellingPrice * 0.05) {
+                                replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
+                                //adding data to dictionary
+                                volumnDict.put(reply.getSender().getLocalName(), tempVolume);
+                                priceDict.put(reply.getSender().getLocalName(), tempPrice);
+                                profitLossDict.put(reply.getSender().getLocalName(), tempProfitLossValue);
+                            }
                         }
 
                         if (repliesCnt >= bidderAgent.length) {
@@ -708,7 +724,6 @@ public class Type2SellerCombinatorial extends Agent{
                             for (int i = 0; i <= replyInfoList.size() - 1;i++){
                                 myGUI.displayUI(replyInfoList.get(i).toString() + "\n");
                             }
-
                             // We received all replies
                             for(Enumeration e = volumnDict.keys(); e.hasMoreElements();){
                                 String temp = e.nextElement().toString();
@@ -776,7 +791,16 @@ public class Type2SellerCombinatorial extends Agent{
                      */
 
                     //Result Preparison.
-                    String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," +bestResult;
+                    String tempBehaviour= "";
+                    if(biddingBehaviourRule == 0){
+                        tempBehaviour = "Generous";
+                    }else if(biddingBehaviourRule == 1){
+                        tempBehaviour = "Neutral";
+                    }else {
+                        tempBehaviour = "Covetous";
+                    }
+                    //Result Preparison.
+                    String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + bestResult;
                     int writCnt = 0;
 
                     for (int i = 0; i <= replyInfoList.size() - 1; i++) {

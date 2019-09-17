@@ -56,6 +56,7 @@ public class Type2BidderCombinatorial extends Agent {
         
         //Setting up new price with all new random in percentage.
         pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
+
         double oldPrice = farmerInfo.buyingPrice;
         farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
         String outputPctTypeTwo = String.format("Neutral price is: %s   Covetous is: %s", String.valueOf(df.format(oldPrice)),String.valueOf(df.format(farmerInfo.buyingPrice)));
