@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Type2BidderCombinatorial extends Agent {
+public class BidderUniformAuction extends Agent {
     //The list of farmer who are seller (maps the water volume to its based price)
     FileInput randValue = new FileInput();
     DatabaseConn app = new DatabaseConn();

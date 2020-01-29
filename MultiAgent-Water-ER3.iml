@@ -7,6 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="JadeLib" level="project" />
+    <orderEntry type="library" name="jadeExamples" level="project" />
   </component>
 </module>

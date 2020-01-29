@@ -910,6 +910,7 @@ public class Type2SellerCombinatorial extends Agent{
         		double pctReduction, double waterReqAfterReduction, double profitAfterReduction, double sellingVol, double sellingPrice){
             this.farmerName = farmerName;
             this.dbName = dbName;
+            this.farmSize = farmSize;
             this.consentPrice = consentPrice;
             this.waterReq = waterReq;
             this.totalProfitValue = totalProfitValue;
