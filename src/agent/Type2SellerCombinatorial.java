@@ -52,7 +52,7 @@ public class Type2SellerCombinatorial extends Agent{
     //Setting up and starting agent.
     protected void setup(){
         // Create and show the GUI
-    	app.selectSellerRandom();
+    	app.selectSeller(getLocalName());
         myGUI = new Type2SellerCombinatorialGui(this);
         myGUI.show();
         System.out.println(getAID().getLocalName() + " is ready");
@@ -289,6 +289,7 @@ public class Type2SellerCombinatorial extends Agent{
                      * Sending message to bidders with two types (Accept proposal or Refuse) based on
                      * accepted water volume to sell.
                      */
+
                 	String tempBehaviour= "";
                 	if(biddingBehaviourRule == 0){
                 	    tempBehaviour = "Generous";
@@ -297,8 +298,11 @@ public class Type2SellerCombinatorial extends Agent{
                     }else {
                 	    tempBehaviour = "Covetous";
                     }
+
+
                 	//Result Preparison.
                 	String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + bestResult;
+                    //String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + bestResult;
                 	int writCnt = 0;
                 	
                 	for (int i = 0; i <= replyInfoList.size() - 1; i++) {
@@ -347,8 +351,8 @@ public class Type2SellerCombinatorial extends Agent{
                     //Writing the all bidder result calculation side to file.
                     //output file location.
                     //String outputFile = "/Users/kitti.ch/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    //String outputFile = "F:/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
-                    String outputFile = "C:/Users/chiewchk/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
+                    String outputFile = "F:/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    //String outputFile = "C:/Users/chiewchk/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
                         
                     try {
                     	WriteToFile(output.toString(), outputFile);
@@ -540,6 +544,7 @@ public class Type2SellerCombinatorial extends Agent{
                      * Sending message to bidders with two types (Accept proposal or Refuse) based on
                      * accepted water volume to sell.
                      */
+
                 	
                 	//Result Preparison.
                     String tempBehaviour= "";
@@ -550,8 +555,10 @@ public class Type2SellerCombinatorial extends Agent{
                     }else {
                         tempBehaviour = "Covetous";
                     }
+
                     //Result Preparison.
                     String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + bestResult;
+                    //String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + bestResult;
                 	int writCnt = 0;
                 	
                 	for (int i = 0; i <= replyInfoList.size() - 1; i++) {
@@ -600,8 +607,8 @@ public class Type2SellerCombinatorial extends Agent{
                     //Writing the all bidder result calculation side to file.
                     //output file location.
                     //String outputFile = "/Users/kitti.ch/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    //String outputFile = "F:/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
-                    String outputFile = "C:/Users/chiewchk/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
+                    String outputFile = "F:/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    //String outputFile = "C:/Users/chiewchk/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
                         
                     try {
                     	WriteToFile(output.toString(), outputFile);
@@ -790,6 +797,7 @@ public class Type2SellerCombinatorial extends Agent{
                      * accepted water volume to sell.
                      */
 
+
                     //Result Preparison.
                     String tempBehaviour= "";
                     if(biddingBehaviourRule == 0){
@@ -799,8 +807,10 @@ public class Type2SellerCombinatorial extends Agent{
                     }else {
                         tempBehaviour = "Covetous";
                     }
+
                     //Result Preparison.
                     String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + bestResult;
+                    //String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + bestResult;
                     int writCnt = 0;
 
                     for (int i = 0; i <= replyInfoList.size() - 1; i++) {
@@ -849,8 +859,8 @@ public class Type2SellerCombinatorial extends Agent{
                     //Writing the all bidder result calculation side to file.
                     //output file location.
                     //String outputFile = "/Users/kitti.ch/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    //String outputFile = "F:/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
-                    String outputFile = "C:/Users/chiewchk/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
+                    String outputFile = "F:/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    //String outputFile = "C:/Users/chiewchk/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
 
                     try {
                         WriteToFile(output.toString(), outputFile);

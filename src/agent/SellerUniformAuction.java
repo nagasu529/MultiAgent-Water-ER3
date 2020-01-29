@@ -45,7 +45,9 @@ public class SellerUniformAuction extends Agent{
     //Selling capacity (Maximum).
     double bestResult = 0.0;
 	String bestResultArray = "";
-	
+
+    //The uniform price setting
+    double uniformSellingPrice = 0.0;
 
     //Setting up and starting agent.
     protected void setup(){
@@ -56,7 +58,6 @@ public class SellerUniformAuction extends Agent{
         System.out.println(getAID().getLocalName() + " is ready");
         farmerInfo = new agentInfo(getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalCost, app.TotalFarmGrossMargin, 
         		app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, app.SellingVol, app.SellingPrice);
-
 
         //Start agent
         DFAgentDescription dfd = new DFAgentDescription();
@@ -297,6 +298,8 @@ public class SellerUniformAuction extends Agent{
                                     tempMaxSellignVol = tempMaxSellignVol - replyInfoList.get(i).totalVolume;
                                 }
                             }
+                            //Set up the uniform price for all agents.
+                            uniformSellingPrice = replyInfoList.get(replyInfoList.size() - 1).price;
 
                             myGUI.displayUI("\n propose preparation message: \n");
                             for(int i = 0; i < replyInfoList.size(); i++){
@@ -304,8 +307,6 @@ public class SellerUniformAuction extends Agent{
                                     myGUI.displayUI(replyInfoList.get(i).toString() + "\n");
                                 }
                             }
-
-
 
                             myGUI.displayUI("Best offer is: " + bestResultArray + " " + bestResult);
 
@@ -353,7 +354,7 @@ public class SellerUniformAuction extends Agent{
                         myGUI.displayUI("ertyuhygtrfr" + replyInfoList.get(i).status + "\n");
                         if(replyInfoList.get(i).status.equals("accept")) {
                             writingFileResult = writingFileResult + "," + replyInfoList.get(i).name + "," + replyInfoList.get(i).nameDB +
-                                    "," + replyInfoList.get(i).totalVolume + "," + replyInfoList.get(i).price + "," + replyInfoList.get(i).pctPriceReduce;
+                                    "," + replyInfoList.get(i).totalVolume + "," + uniformSellingPrice + "," + replyInfoList.get(i).pctPriceReduce;
                             writCnt++;
                         }
 
@@ -394,8 +395,8 @@ public class SellerUniformAuction extends Agent{
 
                     //Writing the all bidder result calculation side to file.
                     //output file location.
-                    String outputFile = "/Users/kitti.ch/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    //String outputFile = "/Users/kitti.ch/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
+                    String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
                     //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
 
                     try {

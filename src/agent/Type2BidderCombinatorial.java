@@ -48,7 +48,7 @@ public class Type2BidderCombinatorial extends Agent {
 
     protected void setup() {
         System.out.println(getAID().getLocalName()+"  is ready" );
-        app.selectBiddersRandom();
+        app.selectBidders(getLocalName());
         farmerInfo = new agentInfo(getAID().getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalFarmGrossMargin, 
         		app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, "bidder",(0.1 * app.ConsentPrice)/100, (app.WaterReq - app.WaterReqAfterReduction));
         
