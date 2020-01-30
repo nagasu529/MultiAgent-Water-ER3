@@ -38,8 +38,8 @@ public class SellerUniformAuction extends Agent{
     ArrayList<Agents> replyInfoList = new ArrayList<Agents>();
     ArrayList<String> acceptNameList = new ArrayList<String>();
     ArrayList<String> output = new ArrayList<String>();
-    int biddingBehaviourRule = getRandomNumberInRange(0,2);
-    //int biddingBehaviourRule = 2;
+    //int biddingBehaviourRule = getRandomNumberInRange(0,2);
+    int biddingBehaviourRule = 1;
     int concernedFact = 0;
     
     //Selling capacity (Maximum).
@@ -210,8 +210,22 @@ public class SellerUniformAuction extends Agent{
                             int pctPriceReduce = Integer.parseInt(arrOfStr[4]);
                             double tempValue = tempVolume * tempPrice;
 
-                            //Finding uinform price process
-                            replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
+                            //Finding uinformal price process and behaviour checking
+                            if(biddingBehaviourRule == 0){
+                                myGUI.displayUI("The seller behaviour is : neutral");       //set up the price on the water consent cost
+                                if(tempPrice >= farmerInfo.sellingPrice){
+                                    replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
+                                }
+                            }else if(biddingBehaviourRule == 1){
+                                myGUI.displayUI("The seller behaviour is : generous");      //do not setting the reserve price.
+                                replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
+                            }else {
+                                myGUI.displayUI("The seller behaviour is : greedy");        // the reserve price is more than consent price 10%
+                                if(tempPrice >= (farmerInfo.sellingPrice + (farmerInfo.sellingPrice * 0.1))){
+                                    replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
+                                }
+                            }
+
 
                             /***
                             if(tempPrice >= farmerInfo.sellingPrice) {
@@ -285,6 +299,7 @@ public class SellerUniformAuction extends Agent{
                                 Collections.reverse(replyInfoList);
                             }
 
+
                             myGUI.displayUI("\n" + "The prioritized list " + "\n");
                             for (int i = 0; i < replyInfoList.size();i++){
                                 myGUI.displayUI(replyInfoList.get(i).toString() + "\n");
@@ -299,12 +314,15 @@ public class SellerUniformAuction extends Agent{
                                 }
                             }
                             //Set up the uniform price for all agents.
-                            uniformSellingPrice = replyInfoList.get(replyInfoList.size() - 1).price;
+                            if(replyInfoList.size()>0) {
+                                uniformSellingPrice = replyInfoList.get(replyInfoList.size() - 1).price;
+                            }
 
                             myGUI.displayUI("\n propose preparation message: \n");
                             for(int i = 0; i < replyInfoList.size(); i++){
                                 if(replyInfoList.get(i).status=="accept"){
                                     myGUI.displayUI(replyInfoList.get(i).toString() + "\n");
+                                    uniformSellingPrice = replyInfoList.get(i).price;       // the last pointer of list shows the uniform price
                                 }
                             }
 
@@ -340,14 +358,14 @@ public class SellerUniformAuction extends Agent{
                     //Result Preparison.
                     String tempBehaviour= "";
                     if(biddingBehaviourRule == 0){
-                        tempBehaviour = "Generous";
-                    }else if(biddingBehaviourRule == 1){
                         tempBehaviour = "Neutral";
+                    }else if(biddingBehaviourRule == 1){
+                        tempBehaviour = "Generous";
                     }else {
-                        tempBehaviour = "Covetous";
+                        tempBehaviour = "Greedy";
                     }
                     //Result Preparison.
-                    String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + bestResult;
+                    String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + uniformSellingPrice;
                     int writCnt = 0;
 
                     for (int i = 0; i <= replyInfoList.size() - 1; i++) {
@@ -395,8 +413,8 @@ public class SellerUniformAuction extends Agent{
 
                     //Writing the all bidder result calculation side to file.
                     //output file location.
-                    //String outputFile = "/Users/kitti.ch/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
+                    //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
                     //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
 
                     try {

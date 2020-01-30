@@ -181,9 +181,9 @@ public class MonitorNewAgent extends Agent {
                             
                             //Writing the all bidder result calculation side to file.
                             //output file location.
-                            //String outputFile = "/Users/kitti.ch/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 		//Macbook
-                            String outputFile = "F:/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 					//Home PC
-                            //String outputFile = "C:/Users/chiewchk/OneDrive/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv";  	//Office
+                            String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 		//Macbook
+                            //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 					//Home PC
+                            //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv";  	//Office
                             
                             Collections.sort(bidderNameDB);
                             bidderNameDB.add(String.valueOf(totalProfitBefore));

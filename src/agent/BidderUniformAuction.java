@@ -34,11 +34,12 @@ public class BidderUniformAuction extends Agent {
     //All behaviour is running on here. It's working on setup price for bidding process.
 
 
-    
+
     //Creating list integer for random reduction percentage.
     Integer[] arrReducList = new Integer[]{50,60,70,80,90,100};
-    int pctPriceReduce = 0;
+    int pctPriceReduce = 100;
     List<Integer> pctPriceReducList = Arrays.asList(arrReducList);
+
     
     //Import Random
     Random rand = new Random();
@@ -53,13 +54,14 @@ public class BidderUniformAuction extends Agent {
         		app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, "bidder",(0.1 * app.ConsentPrice)/100, (app.WaterReq - app.WaterReqAfterReduction));
         
         mornitoringMsg = farmerInfo.farmerName + "-" + farmerInfo.buyingVol + "-" + farmerInfo.buyingPrice + "-" + farmerInfo.profitAfterReduction;
+
+        //stored the neutral price data before it changed on the randomise behaviour.
+        double neutralPrice = farmerInfo.buyingPrice;
         
         //Setting up new price with all new random in percentage.
-        pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
-
-        double oldPrice = farmerInfo.buyingPrice;
+        //pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
         farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
-        String outputPctTypeTwo = String.format("Neutral price is: %s   Covetous is: %s", String.valueOf(df.format(oldPrice)),String.valueOf(df.format(farmerInfo.buyingPrice)));
+        String outputPctTypeTwo = String.format("Neutral price is: %s   Covetous is: %s",(df.format(farmerInfo.buyingPrice)),(df.format(neutralPrice)));
         System.out.println(outputPctTypeTwo);
         //System.out.println("Neutral price is:  " + oldPrice + "  type two price is:  " + farmerInfo.buyingPrice);
         
