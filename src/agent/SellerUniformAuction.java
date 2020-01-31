@@ -36,10 +36,10 @@ public class SellerUniformAuction extends Agent{
 
     int informCnt = 0;
     ArrayList<Agents> replyInfoList = new ArrayList<Agents>();
-    ArrayList<String> acceptNameList = new ArrayList<String>();
+    ArrayList<Agents> acceptNameList = new ArrayList<>();
     ArrayList<String> output = new ArrayList<String>();
     //int biddingBehaviourRule = getRandomNumberInRange(0,2);
-    int biddingBehaviourRule = 1;
+    int biddingBehaviourRule = 0;
     int concernedFact = 0;
     
     //Selling capacity (Maximum).
@@ -306,17 +306,28 @@ public class SellerUniformAuction extends Agent{
                             }
 
                             //Choosing the acceptance
+
                             double tempMaxSellignVol = farmerInfo.sellingVol;
                             for(int i = 0; i < replyInfoList.size(); i++){
                                 if(tempMaxSellignVol > replyInfoList.get(i).totalVolume){
                                     replyInfoList.get(i).status = "accept";
                                     tempMaxSellignVol = tempMaxSellignVol - replyInfoList.get(i).totalVolume;
+                                    uniformSellingPrice = replyInfoList.get(i).price;
+                                }else {
+                                    replyInfoList.get(i).status = "accept";
+                                    replyInfoList.get(i).totalVolume = tempMaxSellignVol;
+                                    uniformSellingPrice = replyInfoList.get(i).price;
+                                    break;
                                 }
                             }
+
                             //Set up the uniform price for all agents.
+
+                            /***
                             if(replyInfoList.size()>0) {
                                 uniformSellingPrice = replyInfoList.get(replyInfoList.size() - 1).price;
                             }
+                             ***/
 
                             myGUI.displayUI("\n propose preparation message: \n");
                             for(int i = 0; i < replyInfoList.size(); i++){
