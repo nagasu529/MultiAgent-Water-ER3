@@ -18,14 +18,15 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
 
 
-public class SellerUniformAuction extends Agent{
-    SellerUniformAuctionGui myGUI;
-    
-    //General parameters preparation.
-    private double totalValueSell;
+public class SellerDiscriminatory extends Agent{
+    SellerDiscriminatoryGui myGui;
+
     DecimalFormat df = new DecimalFormat("###,###.##");
     private int decisionRule;
     FileInput randValue = new FileInput();
@@ -40,27 +41,27 @@ public class SellerUniformAuction extends Agent{
     ArrayList<String> output = new ArrayList<String>();
     //int biddingBehaviourRule = getRandomNumberInRange(0,2);
     int biddingBehaviourRule = 0;
-    int concernedFact = 1;
+    int concernedFact = 0;
     
     //Selling capacity (Maximum).
     double bestResult = 0.0;
 	String bestResultArray = "";
 
     //The uniform price setting
-    double uniformSellingPrice = 0.0;
+    private double totalValue = 0.0;
 
     //Setting up and starting agent.
     protected void setup(){
         // Create and show the GUI
 
         //Initialized input data randomly.
-        app.selectSellerRandom();
+    	app.selectSellerRandom();
 
-        //Initialized fixed data input
+        //Initialized fixed input data.
         //app.selectSeller(getLocalName());
 
-        myGUI = new SellerUniformAuctionGui(this);
-        myGUI.show();
+        myGui = new SellerDiscriminatoryGui(this);
+        myGui.show();
         System.out.println(getAID().getLocalName() + " is ready");
         farmerInfo = new agentInfo(getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalCost, app.TotalFarmGrossMargin, 
         		app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, app.SellingVol, app.SellingPrice);
@@ -84,15 +85,15 @@ public class SellerUniformAuction extends Agent{
         //Add a TickerBehaviour that chooses agent status to buyer or seller.
         addBehaviour(new TickerBehaviour(this, 15000){
             protected void onTick() {
-                myGUI.displayUI("Name: " + farmerInfo.farmerName + "\n");
+                myGui.displayUI("Name: " + farmerInfo.farmerName + "\n");
                 //myGUI.displayUI("Status: " + farmerInfo.agentType + "\n");
-                myGUI.displayUI("Volumn to sell: " + farmerInfo.sellingVol + "\n");
-                myGUI.displayUI("Selling price: " + farmerInfo.sellingPrice + "\n");
-                myGUI.displayUI("\n");
+                myGui.displayUI("Volumn to sell: " + farmerInfo.sellingVol + "\n");
+                myGui.displayUI("Selling price: " + farmerInfo.sellingPrice + "\n");
+                myGui.displayUI("\n");
 
                 // Add the behaviour serving purchase orders from buyer agents
                 addBehaviour(new PurchaseOrdersServer());
-                addBehaviour(new UniformMultiple());
+                addBehaviour(new Discriminatory());
 
                 /*
                  ** Selling water process
@@ -119,11 +120,11 @@ public class SellerUniformAuction extends Agent{
             //String xx = getLocalName() + "," + farmerInfo.dbName + "," + bestResult;
             ACLMessage msg = myAgent.receive(mt);
             if (msg != null) {
-                myGUI.displayUI("\n" + getAID().getLocalName() + "accepted to buy water from" + msg.getSender().getLocalName());
+                myGui.displayUI("\n" + getAID().getLocalName() + "accepted to buy water from" + msg.getSender().getLocalName());
                 informCnt--;
                 if (informCnt == 0){
-                    myGUI.displayUI("Stop it!!!!!!");
-                    myGUI.displayUI("\n");
+                    myGui.displayUI("Stop it!!!!!!");
+                    myGui.displayUI("\n");
                 	takeDown();
                 }
             }else {
@@ -132,7 +133,7 @@ public class SellerUniformAuction extends Agent{
         }
     }
 
-    private class UniformMultiple extends Behaviour {
+    private class Discriminatory extends Behaviour {
         //The list of known water selling agent
         private AID[] bidderAgent;
         private int refuseCnt;
@@ -188,7 +189,7 @@ public class SellerUniformAuction extends Agent{
                     cfp.setConversationId("bidding");
                     cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
                     myAgent.send(cfp);
-                    myGUI.displayUI(cfp.toString());
+                    myGui.displayUI(cfp.toString());
 
                     step = 1;
                     break;
@@ -218,15 +219,15 @@ public class SellerUniformAuction extends Agent{
 
                             //Finding uinformal price process and behaviour checking
                             if(biddingBehaviourRule == 0){
-                                myGUI.displayUI("The seller behaviour is : neutral");       //set up the price on the water consent cost
+                                myGui.displayUI("The seller behaviour is : neutral");       //set up the price on the water consent cost
                                 if(tempPrice >= farmerInfo.sellingPrice){
                                     replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
                                 }
                             }else if(biddingBehaviourRule == 1){
-                                myGUI.displayUI("The seller behaviour is : generous");      //do not setting the reserve price.
+                                myGui.displayUI("The seller behaviour is : generous");      //do not setting the reserve price.
                                 replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
                             }else {
-                                myGUI.displayUI("The seller behaviour is : greedy");        // the reserve price is more than consent price 10%
+                                myGui.displayUI("The seller behaviour is : greedy");        // the reserve price is more than consent price 10%
                                 if(tempPrice >= (farmerInfo.sellingPrice + (farmerInfo.sellingPrice * 0.1))){
                                     replyInfoList.add(new Agents(tempVolume, tempPrice, tempValue, tempProfitLossValue, tempName, tempNameDB, "none", pctPriceReduce));
                                 }
@@ -248,10 +249,10 @@ public class SellerUniformAuction extends Agent{
                         if (repliesCnt >= bidderAgent.length) {
 
                             //Show reply list (all bidders for this round).
-                            myGUI.displayUI("Bidder reply for this stage:" + "\n");
+                            myGui.displayUI("Bidder reply for this stage:" + "\n");
                             //myGUI.displayUI("\n" + getAID().getLocalName() + "    voldict  " + volumnDict.size() + "   price dict  " + priceDict.size());
                             for (int i = 0; i <= replyInfoList.size() - 1;i++){
-                                myGUI.displayUI(replyInfoList.get(i).toString() + "\n");
+                                myGui.displayUI(replyInfoList.get(i).toString() + "\n");
                             }
                             // We received all replies
                             for( int i = 0; i < replyInfoList.size();i++){
@@ -305,10 +306,10 @@ public class SellerUniformAuction extends Agent{
                                 Collections.reverse(replyInfoList);
                             }
 
-
-                            myGUI.displayUI("\n" + "The prioritized list " + "\n");
+                            //Display all offer list.
+                            myGui.displayUI("\n" + "The prioritized list " + "\n");
                             for (int i = 0; i < replyInfoList.size();i++){
-                                myGUI.displayUI(replyInfoList.get(i).toString() + "\n");
+                                myGui.displayUI(replyInfoList.get(i).toString() + "\n");
                             }
 
                             //Choosing the acceptance
@@ -318,11 +319,11 @@ public class SellerUniformAuction extends Agent{
                                 if(tempMaxSellignVol > replyInfoList.get(i).totalVolume){
                                     replyInfoList.get(i).status = "accept";
                                     tempMaxSellignVol = tempMaxSellignVol - replyInfoList.get(i).totalVolume;
-                                    uniformSellingPrice = replyInfoList.get(i).price;
+                                    //uniformSellingPrice = replyInfoList.get(i).price;
                                 }else {
                                     replyInfoList.get(i).status = "accept";
                                     replyInfoList.get(i).totalVolume = tempMaxSellignVol;
-                                    uniformSellingPrice = replyInfoList.get(i).price;
+                                    //uniformSellingPrice = replyInfoList.get(i).price;
                                     break;
                                 }
                             }
@@ -335,15 +336,16 @@ public class SellerUniformAuction extends Agent{
                             }
                              ***/
 
-                            myGUI.displayUI("\n propose preparation message: \n");
+                            myGui.displayUI("\n propose preparation message: \n");
                             for(int i = 0; i < replyInfoList.size(); i++){
                                 if(replyInfoList.get(i).status=="accept"){
-                                    myGUI.displayUI(replyInfoList.get(i).toString() + "\n");
-                                    uniformSellingPrice = replyInfoList.get(i).price;       // the last pointer of list shows the uniform price
+                                    myGui.displayUI(replyInfoList.get(i).toString() + "\n");
+                                    totalValue = totalValue + (replyInfoList.get(i).totalVolume * replyInfoList.get(i).price);
+                                    //uniformSellingPrice = replyInfoList.get(i).price;       // the last pointer of list shows the uniform price
                                 }
                             }
 
-                            myGUI.displayUI("Best offer is: " + bestResultArray + " " + bestResult);
+                            myGui.displayUI("Best offer is: " + bestResultArray + " " + bestResult);
 
                             //Adding information data for winner.
                             bestResultArray = bestResultArray.replace(" ", "");
@@ -355,7 +357,7 @@ public class SellerUniformAuction extends Agent{
                                     if(tempAcceptName[i].equals(replyInfoList.get(j).name)){
                                         replyInfoList.get(j).status = "accept";
                                     }
-                                    myGUI.displayUI("\n" + getLocalName() + "  " + replyInfoList.get(j).name + "  " + replyInfoList.get(j).status );
+                                    myGui.displayUI("\n" + getLocalName() + "  " + replyInfoList.get(j).name + "  " + replyInfoList.get(j).status );
                                 }
                             }
 
@@ -382,14 +384,14 @@ public class SellerUniformAuction extends Agent{
                         tempBehaviour = "Greedy";
                     }
                     //Result Preparison.
-                    String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + uniformSellingPrice;
+                    String writingFileResult = getLocalName() + "," + farmerInfo.dbName + "," + tempBehaviour + "," + totalValue;
                     int writCnt = 0;
 
                     for (int i = 0; i <= replyInfoList.size() - 1; i++) {
-                        myGUI.displayUI("ertyuhygtrfr" + replyInfoList.get(i).status + "\n");
+                        myGui.displayUI("ertyuhygtrfr" + replyInfoList.get(i).status + "\n");
                         if(replyInfoList.get(i).status.equals("accept")) {
                             writingFileResult = writingFileResult + "," + replyInfoList.get(i).name + "," + replyInfoList.get(i).nameDB +
-                                    "," + replyInfoList.get(i).totalVolume + "," + uniformSellingPrice + "," + replyInfoList.get(i).pctPriceReduce;
+                                    "," + replyInfoList.get(i).totalVolume + "," + replyInfoList.get(i).price + "," + replyInfoList.get(i).pctPriceReduce;
                             writCnt++;
                         }
 
@@ -426,7 +428,7 @@ public class SellerUniformAuction extends Agent{
 
                     informCnt = acceptNameList.size();
 
-                    myGUI.displayUI( "\nssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + output.toString() + "\n");
+                    myGui.displayUI( "\nssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + output.toString() + "\n");
 
                     //Writing the all bidder result calculation side to file.
                     //output file location.
@@ -439,7 +441,7 @@ public class SellerUniformAuction extends Agent{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    myGUI.displayUI("Stop it!!!!!!");
+                    myGui.displayUI("Stop it!!!!!!");
                     myAgent.doSuspend();
 
                     step = 3;
@@ -452,7 +454,7 @@ public class SellerUniformAuction extends Agent{
         public boolean done() {
             if (step == 3 && replyInfoList.size() == 0) {
                 //if (step == 3 && maxEuList.size() == 0) {
-                myGUI.displayUI("Do not buyer who provide the matching price");
+                myGui.displayUI("Do not buyer who provide the matching price");
                 takeDown();
 
             }

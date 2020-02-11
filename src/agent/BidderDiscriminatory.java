@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BidderUniformAuction extends Agent {
+public class BidderDiscriminatory extends Agent {
     //The list of farmer who are seller (maps the water volume to its based price)
     FileInput randValue = new FileInput();
     DatabaseConn app = new DatabaseConn();
@@ -37,7 +37,7 @@ public class BidderUniformAuction extends Agent {
 
     //Creating list integer for random reduction percentage.
     Integer[] arrReducList = new Integer[]{50,60,70,80,90,100};
-    int pctPriceReduce = 0;
+    int pctPriceReduce = 100;
     List<Integer> pctPriceReducList = Arrays.asList(arrReducList);
 
     
@@ -53,8 +53,8 @@ public class BidderUniformAuction extends Agent {
         //Initialized input data randomly.
         app.selectBiddersRandom();
 
-        //Initialized fixed data input
-        //app.selectBidders(getLocalName());
+        //Initialized fixed data input.
+        app.selectBidders(getLocalName());
 
         farmerInfo = new agentInfo(getAID().getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalFarmGrossMargin, 
         		app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, "bidder",(0.1 * app.ConsentPrice)/100, (app.WaterReq - app.WaterReqAfterReduction));
@@ -65,7 +65,7 @@ public class BidderUniformAuction extends Agent {
         double neutralPrice = farmerInfo.buyingPrice;
         
         //Setting up new price with all new random in percentage.
-        pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
+        //pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
         farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
         String outputPctTypeTwo = String.format("Neutral price is: %s   Covetous is: %s",(df.format(farmerInfo.buyingPrice)),(df.format(neutralPrice)));
         System.out.println(outputPctTypeTwo);
