@@ -1,23 +1,16 @@
 package calcAuction;
-import database.DatabaseConn;
-import jade.util.leap.Iterator;
 
-import java.awt.image.CropImageFilter;
-import java.io.IOException;
+import database.DatabaseConn;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.Random;
-
-import calcAuction.FileInput.cropType;
 
 
-
-public class FileInput extends DatabaseConn {
+public class FileInputTMP extends DatabaseConn {
 	
 	DecimalFormat df = new DecimalFormat("#.##");
 	
@@ -148,9 +141,8 @@ public class FileInput extends DatabaseConn {
 		//Preparing random data
         Random rand = new Random();
         List<String> farmerNameGen = Arrays.asList("John", "Mark", "Dave", "Morgan", "Steve", "Anna", "Heather", "Nick", "Toby", "Rob");
-        //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Pasture", "Bean(green)", "Pea(vining)", "Kale"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Bean(green)", "Pea(vining)", "Kale"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture","Ryegrass","Fescue","Pasture","Pasture"));
+        //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Barley", "Wheat", "Pasture", "Kale", "Kiwi", "Apple", "Ryegrass", "Fescue", "Pea(vining)"));
+        ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Barley", "Wheat", "Pasture"));
         List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripening");
         //int cropStageGen = ThreadLocalRandom.current().nextInt(1, 4);
@@ -177,7 +169,6 @@ public class FileInput extends DatabaseConn {
             pricePerKg = app.getPricePerKG(cropName);
             soilType = getRandIntRange(1, 3);
             int irrigationTypeIndex = rand.nextInt(irrigationTypeGen.size());
-            String irrigationType = irrigationTypeGen.get(irrigationTypeIndex);
             app.getIrrigationTypeValue(irrigationTypeGen.get(irrigationTypeIndex));
             irrigationTypeValue = app.irrigationRate;
             app.KcStageValue(cropName, cropStageGenText.get(cropStage - 1), irrigationTypeGen.get(irrigationTypeIndex));
@@ -197,9 +188,8 @@ public class FileInput extends DatabaseConn {
 			outputInArrayList.add(new cropType(cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
 					pricePerKg, soilType, irrigationTypeValue, kcStageValue, literPerSecHec, waterReq, soilWaterContainValue,
 					waterReqWithSoil, waterReduction, productValueLost, dsValue, cvValue, stValue, cropEU, costPerKg, profitLost, grossMargin, waterNeed));
-			System.out.println("Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
-					"  Price per kg. : " + df.format(pricePerKg) + "  Crop stage: " + df.format(cropStage) + "  kc Stage Value: " + df.format(kcStageValue) + "  water Req with Soil: " + df.format(waterReqWithSoil) + " soil water contain: " + df.format(soilWaterContainValue) +
-					" Profit value: "  + df.format(cvValue));
+			System.out.println("Water Req: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) +
+					"  Crop Stage: " + df.format(cropStage) + "  kc Stage Value: " + df.format(kcStageValue) + "  water Req with Soil: " + df.format(waterReqWithSoil) + " soil water contain: " + df.format(soilWaterContainValue));
 		}
 	}
 	
@@ -344,7 +334,6 @@ public class FileInput extends DatabaseConn {
     	//Collections.sort(inputArray, new SortbyEU());
     	Collections.reverse(inputArray);
     	String log = "";
-    	String tempInput = "";
     	double totalWaterReqOnFarm = 0.0;
     	//Total cost initialize.
     	double totalReduction = 0.0;
@@ -356,8 +345,6 @@ public class FileInput extends DatabaseConn {
     	double cvValueCost;
     	double totalReductionRequire;
     	double totalFarmSize = 0.0;
-
-    	double totalCvValueWithoutAlgor = 0.0;
     	
     	for (int i = 0; i <= inputArray.size() - 1; i++) {
     		totalWaterReqOnFarm = totalWaterReqOnFarm + inputArray.get(i).waterReqWithSoil;
@@ -372,70 +359,54 @@ public class FileInput extends DatabaseConn {
 			//Profit lost calculation.
 			cvValueCost = tempArray.yieldAmount * tempArray.costPerKg * tempArray.plotSize;
 			totalFarmCvValue = totalFarmCvValue + tempArray.cvValue;
-			double tempCVWithOutAlgor = (((1 - (reductionPct/100)) * tempArray.waterReqWithSoil) * tempArray.cvValue)/tempArray.waterReqWithSoil;
-			totalCvValueWithoutAlgor = totalCvValueWithoutAlgor + tempCVWithOutAlgor;
 			
 			//Adding cvValueCost cvValue
 			totalFarmCvValueCost = totalFarmCvValueCost + cvValueCost;
 			tempArray.grossMarginValue = tempArray.cvValue - cvValueCost;
 			totalFarmGrossMargin = totalFarmGrossMargin + tempArray.grossMarginValue;
-			//double tempTotalReductionReq = totalReductionRequire;
 	    	
 			if (totalReduction < totalReductionRequire ) {
 				if(tempArray.cropName.equals("Pasture") && tempArray.cropStage == 1) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.5;
+					totalReduction = totalReduction + tempArray.waterReduction;
 				}else if (tempArray.cropName.equals("Pasture") && tempArray.cropStage == 2) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.2;
+					totalReduction = totalReduction + tempArray.waterReduction;
 				}else if (tempArray.cropName.equals("Pasture") && tempArray.cropStage == 3) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.1;
+					totalReduction = totalReduction + tempArray.waterReduction;
 				}else if (tempArray.cropStage == 1) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.5;
+					totalReduction = totalReduction + tempArray.waterReduction;
 				}else if (tempArray.cropStage == 2) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.2;
+					totalReduction = totalReduction + tempArray.waterReduction;
 				}else if (tempArray.cropStage == 3) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.15;
+					totalReduction = totalReduction + tempArray.waterReduction;
 				}else {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.1;
+					totalReduction = totalReduction + tempArray.waterReduction;
 				}
+				
 			}else {
 				tempArray.waterReduction = 0.0;
 			}
-
-			if((tempArray.waterReduction + totalReduction) > totalReductionRequire){
-				tempArray.waterReduction = totalReductionRequire - totalReduction;
-				totalReduction = totalReductionRequire;
-			}else {
-				totalReduction = totalReduction + tempArray.waterReduction;
-			}
-			tempArray.waterNeed = tempArray.waterReduction;
-			/***
-			if(totalReduction > totalReductionRequire){
-				tempArray.waterReduction = totalReduction - totalReductionRequire;
-				totalReduction = totalReductionRequire;
-			}
-			***/
-			//Adding cvValueCost cvValue
-
+			
 			//Profit lost calculation.
 			double currentWaterVolForCrop = tempArray.waterReqWithSoil - tempArray.waterReduction;
+			
+			//Adding cvValueCost cvValue
 			double yieldAmountAfterReduction = (currentWaterVolForCrop * tempArray.yieldAmount)/tempArray.waterReqWithSoil;
 			double cvValueAfterReduction = yieldAmountAfterReduction * tempArray.pricePerKg * tempArray.plotSize;
 			totalCvAfterReduction = totalCvAfterReduction + cvValueAfterReduction;
 			if(tempArray.waterReduction == 0) {
 				tempArray.profitLostPct = 0;
-            } else {
-				tempArray.profitLostPct = 100 - (cvValueAfterReduction *100)/tempArray.cvValue;
+			}else {
+				tempArray.profitLostPct = (cvValueAfterReduction *100)/tempArray.cvValue;
 			}
-
-			//Checking the total reduction with the reduction requirement before changed profit calculation
-			/***
-			if(totalReduction > totalReductionRequire){
-				totalReduction = totalReductionRequire;
-			}
-			 ***/
-
 			System.out.println("Profit  " + df.format(tempArray.cvValue) + "   " + df.format(cvValueAfterReduction));
-			System.out.println(tempArray.cropName + "  " + df.format(currentWaterVolForCrop));
+			System.out.println("sdfdsfsdfds  " + df.format(currentWaterVolForCrop));
 			
 			inputArray.remove(i);
 			inputArray.add(i,tempArray);
@@ -446,18 +417,17 @@ public class FileInput extends DatabaseConn {
 		log = log + "\n" + "Total water requirement on farm:  " + df.format(totalWaterReqOnFarm) + "\n" + "Required reduction:  " 
 				+ df.format(totalReductionRequire) + "  " + df.format(reductionPct) + " (%)";
 		log = log + "Total water reduction:  " + df.format(totalReduction) + "    " + df.format(resultReductionPct) + " (%)" + "\n"
-				+ "Total gross margin Value :  " + totalFarmGrossMargin/5 + "\n" + "Total profit loss after reduction (%):  " + (100 - (totalCvAfterReduction * 100)/totalFarmCvValue) + "\n" +
-					"Total profit value before reduction : " + totalFarmCvValue + "  Total profit value after reduction without system (%): " + (100 -  (totalCvValueWithoutAlgor * 100)/totalFarmCvValue);
+				+ "Total gross margin Value :  " + totalFarmGrossMargin/5 + "\n" + "Total profit loss after reduction (%):  " + (100 - ((totalCvAfterReduction * 100)/totalFarmCvValue));
 		log = log + "\n";
 		
 		for (cropType e : inputArray) {
 			log = log + e.toString()+ "\n";
 		}
-		/***
+		
 		//Writing the result to database (Farmers table).
 		double tempReductionReq = totalWaterReqOnFarm - totalReduction;
-		app.insertFarmer(agentName, totalFarmSize, waterConsertCost, totalWaterReqOnFarm, totalFarmCvValue, totalFarmCvValueCost, totalFarmGrossMargin, reductionPct, tempReductionReq, totalCvAfterReduction, waterConsertCost/1000);
-    	***/
+		//app.insertFarmer(agentName, totalFarmSize, waterConsertCost, totalWaterReqOnFarm, totalFarmCvValue, totalFarmCvValueCost, totalFarmGrossMargin, reductionPct, tempReductionReq, totalCvAfterReduction, waterConsertCost/1000);
+    	
     	return log;
     }
     
@@ -523,10 +493,6 @@ public class FileInput extends DatabaseConn {
 			+ df.format(this.waterReduction) + "  Cost:  " + df.format(this.costPerKg) + "  Profit loss (%):  " + df.format(this.profitLostPct) + 
 			"  Gross margin:  " + df.format(this.grossMarginValue) + "  Buying volume need (mm^3/day): " + df.format(this.waterNeed) + "\n";
         	}
-        	public String toStringSource(){
-        	return "Crop name : " + this.cropName + "  Water Requirement: " + df.format(this.waterReqWithSoil) + "  Crop Stage: " + df.format(this.cropStage) + "  Kc stage value: " +
-					df.format(this.kcStageValue) + "  Soil moisture contain: " + df.format(this.soilWaterContainValue) + "  Profit before reduction: " + df.format(this.cvValue);
-			}
     }
 	
 	//Sorted value
@@ -618,108 +584,3 @@ if(incomeAfterReductionPerKg >= costForEachCrop) {
 }
 
 ***/
-
-//CalcWaterReduction Back up before editing the profit value after reduction.
-/***
- * public String calcWaterReduction(double reductionPct, ArrayList<cropType> inputArray, String agentName, double waterConsertCost) {
- *     	//Preparing.
- *     	//Collections.sort(inputArray, new SortbyEU());
- *     	Collections.reverse(inputArray);
- *     	String log = "";
- *     	double totalWaterReqOnFarm = 0.0;
- *     	//Total cost initialize.
- *     	double totalReduction = 0.0;
- *     	double resultReductionPct = 0.0;
- *     	double totalFarmCvValueCost = 0.0;
- *     	double totalFarmCvValue = 0.0;
- *     	double totalFarmGrossMargin = 0.0;
- *     	double totalCvAfterReduction = 0.0;
- *     	double cvValueCost;
- *     	double totalReductionRequire;
- *     	double totalFarmSize = 0.0;
- *
- *     	for (int i = 0; i <= inputArray.size() - 1; i++) {
- *     		totalWaterReqOnFarm = totalWaterReqOnFarm + inputArray.get(i).waterReqWithSoil;
- *     		totalFarmSize = totalFarmSize + inputArray.get(i).plotSize;
- *                }
- *
- *     	totalReductionRequire = totalWaterReqOnFarm * (reductionPct)/100;
- *
- *     	//Reduction rules and functions.
- *     	for (int i = 0; i <= inputArray.size() -1; i++) {
- * 			cropType tempArray = inputArray.get(i);
- * 			//Profit lost calculation.
- * 			cvValueCost = tempArray.yieldAmount * tempArray.costPerKg * tempArray.plotSize;
- * 			totalFarmCvValue = totalFarmCvValue + tempArray.cvValue;
- *
- * 			//Adding cvValueCost cvValue
- * 			totalFarmCvValueCost = totalFarmCvValueCost + cvValueCost;
- * 			tempArray.grossMarginValue = tempArray.cvValue - cvValueCost;
- * 			totalFarmGrossMargin = totalFarmGrossMargin + tempArray.grossMarginValue;
- *
- * 			if (totalReduction < totalReductionRequire ) {
- * 				if(tempArray.cropName.equals("Pasture") && tempArray.cropStage == 1) {
- * 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.5;
- * 					totalReduction = totalReduction + tempArray.waterReduction;
- *                }else if (tempArray.cropName.equals("Pasture") && tempArray.cropStage == 2) {
- * 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.2;
- * 					totalReduction = totalReduction + tempArray.waterReduction;
- *                }else if (tempArray.cropName.equals("Pasture") && tempArray.cropStage == 3) {
- * 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.1;
- * 					totalReduction = totalReduction + tempArray.waterReduction;
- *                }else if (tempArray.cropStage == 1) {
- * 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.5;
- * 					totalReduction = totalReduction + tempArray.waterReduction;
- *                }else if (tempArray.cropStage == 2) {
- * 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.2;
- * 					totalReduction = totalReduction + tempArray.waterReduction;
- *                }else if (tempArray.cropStage == 3) {
- * 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.15;
- * 					totalReduction = totalReduction + tempArray.waterReduction;
- *                }else {
- * 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.1;
- * 					totalReduction = totalReduction + tempArray.waterReduction;
- *                }
- *
- *            }else {
- * 				tempArray.waterReduction = 0.0;
- *            }
- *
- * 			//Profit lost calculation.
- * 			double currentWaterVolForCrop = tempArray.waterReqWithSoil - tempArray.waterReduction;
- *
- * 			//Adding cvValueCost cvValue
- * 			double yieldAmountAfterReduction = (currentWaterVolForCrop * tempArray.yieldAmount)/tempArray.waterReqWithSoil;
- * 			double cvValueAfterReduction = yieldAmountAfterReduction * tempArray.pricePerKg * tempArray.plotSize;
- * 			totalCvAfterReduction = totalCvAfterReduction + cvValueAfterReduction;
- * 			if(tempArray.waterReduction == 0) {
- * 				tempArray.profitLostPct = 0;
- *            }else {
- * 				tempArray.profitLostPct = (cvValueAfterReduction *100)/tempArray.cvValue;
- *            }
- * 			System.out.println("Profit  " + df.format(tempArray.cvValue) + "   " + df.format(cvValueAfterReduction));
- * 			System.out.println("sdfdsfsdfds  " + df.format(currentWaterVolForCrop));
- *
- * 			inputArray.remove(i);
- * 			inputArray.add(i,tempArray);
- *        }
- *
- *     	//Result after reduction.
- *     	resultReductionPct = (totalReduction * 100)/totalWaterReqOnFarm;
- * 		log = log + "\n" + "Total water requirement on farm:  " + df.format(totalWaterReqOnFarm) + "\n" + "Required reduction:  "
- * 				+ df.format(totalReductionRequire) + "  " + df.format(reductionPct) + " (%)";
- * 		log = log + "Total water reduction:  " + df.format(totalReduction) + "    " + df.format(resultReductionPct) + " (%)" + "\n"
- * 				+ "Total gross margin Value :  " + totalFarmGrossMargin/5 + "\n" + "Total profit loss after reduction (%):  " + (100 - ((totalCvAfterReduction * 100)/totalFarmCvValue));
- * 		log = log + "\n";
- *
- * 		for (cropType e : inputArray) {
- * 			log = log + e.toString()+ "\n";
- *        }
- *
- * 		//Writing the result to database (Farmers table).
- * 		//double tempReductionReq = totalWaterReqOnFarm - totalReduction;
- * 		//app.insertFarmer(agentName, totalFarmSize, waterConsertCost, totalWaterReqOnFarm, totalFarmCvValue, totalFarmCvValueCost, totalFarmGrossMargin, reductionPct, tempReductionReq, totalCvAfterReduction, waterConsertCost/1000);
- *
- *     	return log;
-		 *     }
- ***/

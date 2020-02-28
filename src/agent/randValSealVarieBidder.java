@@ -31,16 +31,23 @@ public class randValSealVarieBidder extends Agent {
 
     //agentInfo bidderInfo = new agentInfo("", "bidder", randValue.getRandDoubleRange(10, 16), randValue.getRandDoubleRange(300, 2000));
     agentInfo bidderInfo;
-    //Instant best seller for the ACCEPT_PROPOSAL message.
+
+    /***
     int cnt = 0;
     int fiveHundredVol = 500;
     int fiveHundredVolFreq;
     double varieVol;
     int varieVolFreq = 1;
+     ***/
 
     protected void setup() {
         //Farmer information is loaded from database.
-        app.selectBiddersRandom();
+        //Randomized data input.
+        //app.selectBiddersRandom();
+
+        //Fixed data input
+        app.selectBidders(getLocalName());
+
         bidderInfo = new agentInfo(getAID().getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalFarmGrossMargin,
                 app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, "bidder",(0.1 * app.ConsentPrice)/100, (app.WaterReq - app.WaterReqAfterReduction));
 

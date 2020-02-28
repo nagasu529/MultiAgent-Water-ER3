@@ -23,9 +23,6 @@ import database.DatabaseConn;
 
 import java.util.*;
 
-import com.sun.xml.internal.ws.message.stream.OutboundStreamHeader;
-
-
 public class randValSealVarieSeller extends Agent {
     randValSealVarieSellerGui myGui;
     agentInfo sellerInfo;
@@ -47,7 +44,14 @@ public class randValSealVarieSeller extends Agent {
 
     protected void setup(){
         // Create and show the GUI
-        app.selectSellerRandom();
+
+        //Selected data from databased
+        //Randomised
+        //app.selectSellerRandom();
+
+        //Fixed
+        app.selectSeller(getLocalName());
+        
         sellerInfo = new agentInfo(getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalCost, app.TotalFarmGrossMargin, app.PctReduction,
                 app.WaterReqAfterReduction, app.ProfitAfterReduction, app.SellingVol, app.SellingPrice);
 

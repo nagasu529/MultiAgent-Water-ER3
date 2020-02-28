@@ -39,8 +39,8 @@ public class SellerDiscriminatory extends Agent{
     ArrayList<Agents> replyInfoList = new ArrayList<Agents>();
     ArrayList<Agents> acceptNameList = new ArrayList<>();
     ArrayList<String> output = new ArrayList<String>();
-    //int biddingBehaviourRule = getRandomNumberInRange(0,2);
-    int biddingBehaviourRule = 0;
+    int biddingBehaviourRule = getRandomNumberInRange(0,2);
+    //int biddingBehaviourRule = 0;
     int concernedFact = 0;
     
     //Selling capacity (Maximum).
@@ -55,10 +55,10 @@ public class SellerDiscriminatory extends Agent{
         // Create and show the GUI
 
         //Initialized input data randomly.
-    	app.selectSellerRandom();
+    	//app.selectSellerRandom();
 
         //Initialized fixed input data.
-        //app.selectSeller(getLocalName());
+        app.selectSeller(getLocalName());
 
         myGui = new SellerDiscriminatoryGui(this);
         myGui.show();
@@ -94,22 +94,6 @@ public class SellerDiscriminatory extends Agent{
                 // Add the behaviour serving purchase orders from buyer agents
                 addBehaviour(new PurchaseOrdersServer());
                 addBehaviour(new Discriminatory());
-
-                /*
-                 ** Selling water process
-
-                if(biddingBehaviourRule == 0){
-                    addBehaviour(new GenerousBehaviour());
-                    myGUI.displayUI("Bidding behaviour is Generous Behaviour" + "\n");
-                }else if(biddingBehaviourRule == 1){
-                    addBehaviour(new NeutralBehaviour());
-                    myGUI.displayUI("Bidding behaviour is Neutral Behaviour" + "\n");
-                }else {
-                    addBehaviour(new CovetousBehaviour());
-                    myGUI.displayUI("Bidding behaviour is Covetous Behaviour" + "\n");
-                }
-
-                 */
             }
         } );
     }
@@ -259,44 +243,6 @@ public class SellerDiscriminatory extends Agent{
                                 replyInfoList.get(i).toString();
                             }
 
-                            /***
-                            for(Enumeration e = volumnDict.keys(); e.hasMoreElements();){
-                                String temp = e.nextElement().toString();
-                                bidderList.add(temp);
-                            }
-                            String[] tempBidderList = GetStringArray(bidderList);
-
-
-                            int maxBinaryNum = (int) Math.pow(2, tempBidderList.length);
-                            myGUI.displayUI("Maximum round calculation: " + maxBinaryNum);
-                            //Initialize result constructors.
-                            //Combinatorial process.
-                            while(maxBinaryNum > 1) {
-                                String tempResult = binaryToVale(maxBinaryNum -1, tempBidderList);
-                                double roundResult = 0.0;
-                                double roundVolume = 0.0;
-                                String[] arrOftempResult = tempResult.split(" ");
-                                int lenArrOfTempResult = arrOftempResult.length;
-                                while (lenArrOfTempResult >= 1) {
-                                    double volFromDict = volumnDict.get(arrOftempResult[lenArrOfTempResult -1]);
-                                    double priceFromDict = priceDict.get(arrOftempResult[lenArrOfTempResult -1]);
-                                    double valueFromDict = priceFromDict * volFromDict;
-                                    roundResult = roundResult + valueFromDict;
-                                    roundVolume = roundVolume + volFromDict;
-                                    //System.out.println(arrOftempResult[lenArrOfTempResult -1] + "\n");
-                                    lenArrOfTempResult--;
-                                }
-                                //System.out.println("total value from this decimal orders: " + roundResult + " " + tempResult);
-
-
-                                if(roundResult > bestResult && roundVolume < farmerInfo.sellingVol) {
-                                    bestResult = roundResult;
-                                    bestResultArray = Arrays.deepToString(arrOftempResult);
-                                }
-                                maxBinaryNum--;
-                            }
-                             ***/
-
                             //prioritized arrayList basd on factors which are price and volume.
                             if(concernedFact == 0){
                                 Collections.sort(replyInfoList, new PriceOfferSorted());
@@ -388,7 +334,7 @@ public class SellerDiscriminatory extends Agent{
                     int writCnt = 0;
 
                     for (int i = 0; i <= replyInfoList.size() - 1; i++) {
-                        myGui.displayUI("ertyuhygtrfr" + replyInfoList.get(i).status + "\n");
+                        myGui.displayUI("\n ertyuhygtrfr" + replyInfoList.get(i).status + "\n");
                         if(replyInfoList.get(i).status.equals("accept")) {
                             writingFileResult = writingFileResult + "," + replyInfoList.get(i).name + "," + replyInfoList.get(i).nameDB +
                                     "," + replyInfoList.get(i).totalVolume + "," + replyInfoList.get(i).price + "," + replyInfoList.get(i).pctPriceReduce;

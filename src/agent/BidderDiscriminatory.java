@@ -37,7 +37,7 @@ public class BidderDiscriminatory extends Agent {
 
     //Creating list integer for random reduction percentage.
     Integer[] arrReducList = new Integer[]{50,60,70,80,90,100};
-    int pctPriceReduce = 100;
+    int pctPriceReduce = 0;
     List<Integer> pctPriceReducList = Arrays.asList(arrReducList);
 
     
@@ -51,7 +51,7 @@ public class BidderDiscriminatory extends Agent {
         System.out.println(getAID().getLocalName()+"  is ready" );
 
         //Initialized input data randomly.
-        app.selectBiddersRandom();
+        //app.selectBiddersRandom();
 
         //Initialized fixed data input.
         app.selectBidders(getLocalName());
@@ -65,8 +65,10 @@ public class BidderDiscriminatory extends Agent {
         double neutralPrice = farmerInfo.buyingPrice;
         
         //Setting up new price with all new random in percentage.
-        //pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
+
+        pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
         farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
+
         String outputPctTypeTwo = String.format("Neutral price is: %s   Covetous is: %s",(df.format(farmerInfo.buyingPrice)),(df.format(neutralPrice)));
         System.out.println(outputPctTypeTwo);
         //System.out.println("Neutral price is:  " + oldPrice + "  type two price is:  " + farmerInfo.buyingPrice);
@@ -372,5 +374,13 @@ public class BidderDiscriminatory extends Agent {
         public int compare(Agents a, Agents b) {
             return Double.compare(a.totalVolume, b.totalVolume);
         }
+    }
+    //Private random generator
+    private static int getRandomNumberInRange(int min, int max){
+        if(min >= max){
+            throw  new IllegalArgumentException("max number must be greater than min number");
+        }
+        Random r  = new Random();
+        return r.nextInt((max - min) +1) + min;
     }
 }

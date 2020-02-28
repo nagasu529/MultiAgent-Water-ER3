@@ -51,10 +51,10 @@ public class BidderUniformAuction extends Agent {
         System.out.println(getAID().getLocalName()+"  is ready" );
 
         //Initialized input data randomly.
-        app.selectBiddersRandom();
+        //app.selectBiddersRandom();
 
         //Initialized fixed data input
-        //app.selectBidders(getLocalName());
+        app.selectBidders(getLocalName());
 
         farmerInfo = new agentInfo(getAID().getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalFarmGrossMargin, 
         		app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, "bidder",(0.1 * app.ConsentPrice)/100, (app.WaterReq - app.WaterReqAfterReduction));
@@ -67,6 +67,7 @@ public class BidderUniformAuction extends Agent {
         //Setting up new price with all new random in percentage.
         pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
         farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
+
         String outputPctTypeTwo = String.format("Neutral price is: %s   Covetous is: %s",(df.format(farmerInfo.buyingPrice)),(df.format(neutralPrice)));
         System.out.println(outputPctTypeTwo);
         //System.out.println("Neutral price is:  " + oldPrice + "  type two price is:  " + farmerInfo.buyingPrice);
