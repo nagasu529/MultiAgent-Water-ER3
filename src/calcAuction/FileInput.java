@@ -148,7 +148,7 @@ public class FileInput extends DatabaseConn {
 		//Preparing random data
         Random rand = new Random();
         List<String> farmerNameGen = Arrays.asList("John", "Mark", "Dave", "Morgan", "Steve", "Anna", "Heather", "Nick", "Toby", "Rob");
-        //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Pasture", "Bean(green)", "Pea(vining)", "Kale"));
+        //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Pasture", "Bean(green)", "Pea(vining)", "Kale","Ryegrass","Fescue"));
 		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Bean(green)", "Pea(vining)", "Kale"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture","Ryegrass","Fescue","Pasture","Pasture"));
         List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
@@ -446,8 +446,8 @@ public class FileInput extends DatabaseConn {
 		log = log + "\n" + "Total water requirement on farm:  " + df.format(totalWaterReqOnFarm) + "\n" + "Required reduction:  " 
 				+ df.format(totalReductionRequire) + "  " + df.format(reductionPct) + " (%)";
 		log = log + "Total water reduction:  " + df.format(totalReduction) + "    " + df.format(resultReductionPct) + " (%)" + "\n"
-				+ "Total gross margin Value :  " + totalFarmGrossMargin/5 + "\n" + "Total profit loss after reduction (%):  " + (100 - (totalCvAfterReduction * 100)/totalFarmCvValue) + "\n" +
-					"Total profit value before reduction : " + totalFarmCvValue + "  Total profit value after reduction without system (%): " + (100 -  (totalCvValueWithoutAlgor * 100)/totalFarmCvValue);
+				+ "Total gross margin Value :  " + totalFarmGrossMargin/5 + "\n" + "Total profit loss after reduction (%):  " + (100 - (totalCvAfterReduction * 100)/totalFarmCvValue) +  "  Value: " + totalCvAfterReduction + "\n" +
+					"Total profit value before reduction : " + totalFarmCvValue + "  Total profit value after reduction without system (%): " + (100 -  (totalCvValueWithoutAlgor * 100)/totalFarmCvValue) + totalCvValueWithoutAlgor + "\n";
 		log = log + "\n";
 		
 		for (cropType e : inputArray) {
@@ -519,13 +519,24 @@ public class FileInput extends DatabaseConn {
 			
 		}
 			public String toString() {
+        		double profitAfterReduction = ((100 - this.profitLostPct)/100) * this.cvValue;
         		return this.cropName + "  Water requirement for crop:  " + df.format(this.waterReqWithSoil) +  "  water reduction:  " 
-			+ df.format(this.waterReduction) + "  Cost:  " + df.format(this.costPerKg) + "  Profit loss (%):  " + df.format(this.profitLostPct) + 
+			+ df.format(this.waterReduction) + "  Cost:  " + df.format(this.costPerKg) + "  Profit after reduction: " + df.format(profitAfterReduction) + "  Profit loss (%) :  " + df.format(this.profitLostPct) +
 			"  Gross margin:  " + df.format(this.grossMarginValue) + "  Buying volume need (mm^3/day): " + df.format(this.waterNeed) + "\n";
         	}
         	public String toStringSource(){
-        	return "Crop name : " + this.cropName + "  Water Requirement: " + df.format(this.waterReqWithSoil) + "  Crop Stage: " + df.format(this.cropStage) + "  Kc stage value: " +
-					df.format(this.kcStageValue) + "  Soil moisture contain: " + df.format(this.soilWaterContainValue) + "  Profit before reduction: " + df.format(this.cvValue);
+        	String tempCropstage = "";
+        	if (this.cropStage == 1){
+        		tempCropstage = "Initial stage";
+			}else if(this.cropStage == 2){
+        		tempCropstage = "Development stage";
+			}else if(this.cropStage == 3){
+        		tempCropstage = "Germination stage";
+			}else {
+        		tempCropstage = "Flowering stage";
+			}
+        	return "Crop name : " + this.cropName + "  Planting size: " + df.format(this.plotSize) + "  Crop Stage: " + tempCropstage + "  Water Requirement: " + df.format(this.waterReqWithSoil) + "  Profit before reduction: " + df.format(this.cvValue) +
+					"  Kc stage value: " + df.format(this.kcStageValue) + "  Soil moisture contain: " + df.format(this.soilWaterContainValue);
 			}
     }
 	
