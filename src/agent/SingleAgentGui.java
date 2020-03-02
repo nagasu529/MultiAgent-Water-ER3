@@ -33,7 +33,7 @@ public class SingleAgentGui extends JFrame {
         log = new JTextArea(5, 20);
         log.setEditable(false);
         getContentPane().add(log, BorderLayout.CENTER);
-        log.setMargin(new Insets(5, 5, 300, 300));
+        log.setMargin(new Insets(5, 5, 300, 500));
         JScrollPane logScrollPane = new JScrollPane(log);
         getContentPane().add(logScrollPane, BorderLayout.CENTER);
 

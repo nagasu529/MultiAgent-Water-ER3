@@ -149,7 +149,7 @@ public class FileInput extends DatabaseConn {
         Random rand = new Random();
         List<String> farmerNameGen = Arrays.asList("John", "Mark", "Dave", "Morgan", "Steve", "Anna", "Heather", "Nick", "Toby", "Rob");
         //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Pasture", "Bean(green)", "Pea(vining)", "Kale","Ryegrass","Fescue"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Bean(green)", "Pea(vining)", "Kale"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Kale", "Oil seed", "Hybrid carrot seed", "Fodder beet", "Perennial ryegrass", "White clover"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture","Ryegrass","Fescue","Pasture","Pasture"));
         List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripening");
