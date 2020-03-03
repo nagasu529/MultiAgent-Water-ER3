@@ -148,9 +148,9 @@ public class FileInput extends DatabaseConn {
 		//Preparing random data
         Random rand = new Random();
         List<String> farmerNameGen = Arrays.asList("John", "Mark", "Dave", "Morgan", "Steve", "Anna", "Heather", "Nick", "Toby", "Rob");
-        //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea(field)", "Maize(sweet)", "Wheat", "Pasture", "Bean(green)", "Pea(vining)", "Kale","Ryegrass","Fescue"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Kale", "Oil seed", "Hybrid carrot seed", "Fodder beet", "Perennial ryegrass", "White clover"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture","Ryegrass","Fescue","Pasture","Pasture"));
+        //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea(field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea(vining)", "Oil seed"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
         List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripening");
         //int cropStageGen = ThreadLocalRandom.current().nextInt(1, 4);
@@ -382,11 +382,14 @@ public class FileInput extends DatabaseConn {
 			//double tempTotalReductionReq = totalReductionRequire;
 	    	
 			if (totalReduction < totalReductionRequire ) {
-				if(tempArray.cropName.equals("Pasture") && tempArray.cropStage == 1) {
+				if((tempArray.cropName.equals("Pasture") && tempArray.cropStage == 1) || (tempArray.cropName.equals("White clover") && tempArray.cropStage == 1)
+				|| (tempArray.cropName.equals("Kale") && tempArray.cropStage == 1) || (tempArray.cropName.equals("Fodder beet") && tempArray.cropStage == 1) || (tempArray.cropName.equals("Perennial ryegrass") && tempArray.cropStage == 1)) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.5;
-				}else if (tempArray.cropName.equals("Pasture") && tempArray.cropStage == 2) {
+				}else if ((tempArray.cropName.equals("Pasture") && tempArray.cropStage == 2) || (tempArray.cropName.equals("White clover") && tempArray.cropStage == 2)
+						|| (tempArray.cropName.equals("Kale") && tempArray.cropStage == 2) || (tempArray.cropName.equals("Fodder beet") && tempArray.cropStage == 2) || (tempArray.cropName.equals("Perennial ryegrass") && tempArray.cropStage == 2)) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.2;
-				}else if (tempArray.cropName.equals("Pasture") && tempArray.cropStage == 3) {
+				}else if ((tempArray.cropName.equals("Pasture") && tempArray.cropStage == 3) || (tempArray.cropName.equals("White clover") && tempArray.cropStage == 3)
+						|| (tempArray.cropName.equals("Kale") && tempArray.cropStage == 3) || (tempArray.cropName.equals("Fodder beet") && tempArray.cropStage == 3) || (tempArray.cropName.equals("Perennial ryegrass") && tempArray.cropStage == 3)) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.1;
 				}else if (tempArray.cropStage == 1) {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.5;
