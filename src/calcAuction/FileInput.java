@@ -147,11 +147,23 @@ public class FileInput extends DatabaseConn {
 
 		//Preparing random data
         Random rand = new Random();
+
+        //Setting the farm size max to 200 Hectre.
+        double farmSizeMax = 0;
+
+
         List<String> farmerNameGen = Arrays.asList("John", "Mark", "Dave", "Morgan", "Steve", "Anna", "Heather", "Nick", "Toby", "Rob");
-        //ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea(field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea(vining)", "Oil seed"));
+
+		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
-        List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
+
+		//all pasture type
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
+
+		//all crops and pasture.
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
+
+		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripening");
         //int cropStageGen = ThreadLocalRandom.current().nextInt(1, 4);
         //int droughtSensitivityGen = ThreadLocalRandom.current().nextInt(1,3);
@@ -172,7 +184,15 @@ public class FileInput extends DatabaseConn {
             cropNameGen.remove(cropNameGenIndex);
             cropStage = getRandIntRange(1, 4);
             droughtSensitivity = getRandIntRange(1, 3);
-            plotSize = getRandDoubleRange(5, 30);
+
+            // Adding the number of farm size.
+			if(numberOfElements == 4){
+				plotSize =  200 - farmSizeMax;
+			}else {
+				plotSize = getRandDoubleRange(35, 55);
+				farmSizeMax = farmSizeMax + plotSize;
+			}
+
             yieldAmount = app.getYieldAmount(cropName);
             pricePerKg = app.getPricePerKG(cropName);
             soilType = getRandIntRange(1, 3);
