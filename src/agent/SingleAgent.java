@@ -63,8 +63,8 @@ public class SingleAgent extends Agent {
         calCrops.randFarmFactorValues(outputList);
 
         double consentCost = calCrops.getRandDoubleRange(10000, 20000);
-        String log = calCrops.calcCropEU(outputList);
-        myGui.displayUI(log);
+        //String log = calCrops.calcCropEU(outputList,0);
+        //myGui.displayUI(log);
 
         //Display Farm information source arrays.
         myGui.displayUI("Source farming information" + "\n");
@@ -73,16 +73,16 @@ public class SingleAgent extends Agent {
         }
 
 
-        String resultLog1 = calCrops.calcWaterReduction(5, outputList, getAID().getLocalName(), consentCost);
+        String resultLog1 = calCrops.calcWaterReduction(5, outputList, getAID().getLocalName(), consentCost,0);
         myGui.displayUI(resultLog1);
 
-        String resultLog2 = calCrops.calcWaterReduction(10, outputList, getAID().getLocalName(), consentCost);
+        String resultLog2 = calCrops.calcWaterReduction(10, outputList, getAID().getLocalName(), consentCost,0);
         myGui.displayUI(resultLog2);
 
-        String resultLog3 = calCrops.calcWaterReduction(15, outputList, getAID().getLocalName(),consentCost);
+        String resultLog3 = calCrops.calcWaterReduction(15, outputList, getAID().getLocalName(),consentCost,0);
         myGui.displayUI(resultLog3);
 
-        String resultLog4 = calCrops.calcWaterReduction(20, outputList, getAID().getLocalName(), consentCost);
+        String resultLog4 = calCrops.calcWaterReduction(20, outputList, getAID().getLocalName(), consentCost,0);
         myGui.displayUI(resultLog4);
 
         //Add a TickerBehaviour that chooses agent status to buyer or seller.

@@ -305,61 +305,90 @@ public class FileInput extends DatabaseConn {
         double outputVariable = (waterReductionMM * cropProductValue) / cropWaterReq;
         return outputVariable;
     }
-	
-    public String calcCropEU(ArrayList<cropType> inputArrayList) {
-    	double sumCV = 0.0;
-    	double sumDS = 0.0;
-    	double sumST = 0.0;
-    	double maxDS = (inputArrayList.size() * 33);	//Maximum dsValue on farm.	
-    	
-    	String log = "";
-    	for (int i = 0; i <= inputArrayList.size() -1; i++) {
-    		sumCV = sumCV + inputArrayList.get(i).cvValue;
-    		sumDS = sumDS + inputArrayList.get(i).dsValue;
-    		sumST = sumST + inputArrayList.get(i).stValue;
-    		System.out.print(inputArrayList.get(i).toString());
+	/***
+    public String calcCropEU(ArrayList<cropType> inputArrayList,int decisionMethod) {
+
+		String log = "";
+
+		switch (decisionMethod) {
+			case '0':
+				//Decision-1 CV value is the first priority.
+				log = log + "The first priority is crop value";
+				Collections.sort(inputArrayList, new SortbyCvValue());
+				Collections.reverse(inputArrayList);
+				break;
+			case '1':
+				//Second decision: The Drought sensitivity.
+				log = log + "The first priority is crop drought sensitivity";
+				Collections.sort(inputArrayList, new SortbyDsValue());
+				Collections.reverse(inputArrayList);
+				break;
+			case '3':
+				//Third decision: Soil moisture factors.
+				log = log + "the first priority is soil moisture level";
+				Collections.sort(inputArrayList, new SortbyDsValue());
+				Collections.reverse(inputArrayList);
 		}
-    	
-    	//Decision-1 CV value is the first priority.
-    	Collections.sort(inputArrayList, new SortbyCvValue());
-    	Collections.reverse(inputArrayList);
-    	if(inputArrayList.get(0).cvValue > (sumCV * 0.7)) {
-    		log = log + "Choosing dicision 1 \n" + "First priority: Crop value \n";
-    		
-    		for (int j = 0; j <= inputArrayList.size() -1; j++) {
+		return log;
+    }
+	 ***/
+
+    /***
+	public String calcCropEU(ArrayList<cropType> inputArrayList) {
+		double sumCV = 0.0;
+		double sumDS = 0.0;
+		double sumST = 0.0;
+		double maxDS = (inputArrayList.size() * 33);	//Maximum dsValue on farm.
+
+		String log = "";
+		for (int i = 0; i <= inputArrayList.size() -1; i++) {
+			sumCV = sumCV + inputArrayList.get(i).cvValue;
+			sumDS = sumDS + inputArrayList.get(i).dsValue;
+			sumST = sumST + inputArrayList.get(i).stValue;
+			System.out.print(inputArrayList.get(i).toString());
+		}
+
+		//Decision-1 CV value is the first priority.
+		Collections.sort(inputArrayList, new SortbyCvValue());
+		Collections.reverse(inputArrayList);
+		if(inputArrayList.get(0).cvValue > (sumCV * 0.7)) {
+			log = log + "Choosing dicision 1 \n" + "First priority: Crop value \n";
+
+			for (int j = 0; j <= inputArrayList.size() -1; j++) {
 				cropType tempData = inputArrayList.get(j);
-    		tempData.cropEU = (0.0 * tempData.dsValue) + (0.0 * tempData.stValue) + (1.0 * tempData.cvValue);
-    		inputArrayList.remove(j);
-    		inputArrayList.add(j,tempData);
+				tempData.cropEU = (0.0 * tempData.dsValue) + (0.0 * tempData.stValue) + (1.0 * tempData.cvValue);
+				inputArrayList.remove(j);
+				inputArrayList.add(j,tempData);
 			}
-    		Collections.sort(inputArrayList, new SortbyCvValue());
-    		Collections.reverse(inputArrayList);
-    	}else if (sumDS > (maxDS * 0.6)){
-    		log = log + "Choosing dicision 2 \n" + "First priority: Drought Sensitivity \n";
-    		for (int j = 0; j <= inputArrayList.size() -1; j++) {
+			Collections.sort(inputArrayList, new SortbyCvValue());
+			Collections.reverse(inputArrayList);
+		}else if (sumDS > (maxDS * 0.6)){
+			log = log + "Choosing dicision 2 \n" + "First priority: Drought Sensitivity \n";
+			for (int j = 0; j <= inputArrayList.size() -1; j++) {
 				cropType tempData = inputArrayList.get(j);
-    		tempData.cropEU = (1.0 * tempData.dsValue) + (0.0 * tempData.stValue) + (0.0 * tempData.cvValue);
-    		inputArrayList.remove(j);
-    		inputArrayList.add(j,tempData);
+				tempData.cropEU = (1.0 * tempData.dsValue) + (0.0 * tempData.stValue) + (0.0 * tempData.cvValue);
+				inputArrayList.remove(j);
+				inputArrayList.add(j,tempData);
 			}
-    		Collections.sort(inputArrayList, new SortbyDsValue());
-    		Collections.reverse(inputArrayList);
+			Collections.sort(inputArrayList, new SortbyDsValue());
+			Collections.reverse(inputArrayList);
 		}else {
 			log = log + "Choosing dicision 3 \n" + "First priority: Drought Soil type \n";
-    		for (int j = 0; j <= inputArrayList.size() -1; j++) {
+			for (int j = 0; j <= inputArrayList.size() -1; j++) {
 				cropType tempData = inputArrayList.get(j);
-    		tempData.cropEU = (1.0 * tempData.dsValue) + (1.0 * tempData.stValue) + (0.0 * tempData.cvValue);
-    		inputArrayList.remove(j);
-    		inputArrayList.add(j,tempData);
+				tempData.cropEU = (1.0 * tempData.dsValue) + (1.0 * tempData.stValue) + (0.0 * tempData.cvValue);
+				inputArrayList.remove(j);
+				inputArrayList.add(j,tempData);
 			}
-    		Collections.sort(inputArrayList, new SortbyStValue());
-    		Collections.reverse(inputArrayList);
+			Collections.sort(inputArrayList, new SortbyStValue());
+			Collections.reverse(inputArrayList);
 		}
-    	
-    	return log;
-    }
-    
-    public String calcWaterReduction(double reductionPct, ArrayList<cropType> inputArray, String agentName, double waterConsertCost) {
+
+		return log;
+	}
+    ***/
+
+    public String calcWaterReduction(double reductionPct, ArrayList<cropType> inputArray, String agentName, double waterConsertCost, int decisionMethod) {
     	//Preparing.
     	//Collections.sort(inputArray, new SortbyEU());
     	Collections.reverse(inputArray);
@@ -376,6 +405,7 @@ public class FileInput extends DatabaseConn {
     	double cvValueCost;
     	double totalReductionRequire;
     	double totalFarmSize = 0.0;
+    	String decisionStr = "";
 
     	double totalCvValueWithoutAlgor = 0.0;
     	
@@ -385,6 +415,26 @@ public class FileInput extends DatabaseConn {
 		}
     	
     	totalReductionRequire = totalWaterReqOnFarm * (reductionPct)/100;
+
+		switch (decisionMethod) {
+			case '0':
+				//Decision-1 CV value is the first priority.
+				decisionStr =  "The first priority is crop value";
+				Collections.sort(inputArray, new SortbyCvValue());
+				Collections.reverse(inputArray);
+				break;
+			case '1':
+				//Second decision: The Drought sensitivity.
+				decisionStr = "The first priority is crop drought sensitivity";
+				Collections.sort(inputArray, new SortbyDsValue());
+				Collections.reverse(inputArray);
+				break;
+			case '3':
+				//Third decision: Soil moisture factors.
+				decisionStr = "the first priority is soil moisture level";
+				Collections.sort(inputArray, new SortbyDsValue());
+				Collections.reverse(inputArray);
+		}
     	
     	//Reduction rules and functions.
     	for (int i = 0; i <= inputArray.size() -1; i++) {
@@ -467,7 +517,7 @@ public class FileInput extends DatabaseConn {
     	//Result after reduction.
     	resultReductionPct = (totalReduction * 100)/totalWaterReqOnFarm;
 		log = log + "\n" + "Total water requirement on farm:  " + df.format(totalWaterReqOnFarm) + "\n" + "Required reduction:  " 
-				+ df.format(totalReductionRequire) + "  " + df.format(reductionPct) + " (%)";
+				+ df.format(totalReductionRequire) + "  " + df.format(reductionPct) + " (%)" + "\n" + decisionStr + "\n";
 		log = log + "Total water reduction:  " + df.format(totalReduction) + "    " + df.format(resultReductionPct) + " (%)" + "\n"
 				+ "Total gross margin Value :  " + totalFarmGrossMargin/5 + "\n" + "Total profit loss after reduction (%):  " + (100 - (totalCvAfterReduction * 100)/totalFarmCvValue) +  "  Value: " + totalCvAfterReduction + "\n" +
 					"Total profit value before reduction : " + totalFarmCvValue + "  Total profit value after reduction without system (%): " + (100 -  (totalCvValueWithoutAlgor * 100)/totalFarmCvValue) + totalCvValueWithoutAlgor + "\n";
