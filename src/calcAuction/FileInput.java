@@ -158,10 +158,10 @@ public class FileInput extends DatabaseConn {
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
 
 		//all pasture type
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
 
 		//all crops and pasture.
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripening");
@@ -305,7 +305,7 @@ public class FileInput extends DatabaseConn {
         double outputVariable = (waterReductionMM * cropProductValue) / cropWaterReq;
         return outputVariable;
     }
-	/***
+
     public String calcCropEU(ArrayList<cropType> inputArrayList,int decisionMethod) {
 
 		String log = "";
@@ -328,10 +328,13 @@ public class FileInput extends DatabaseConn {
 				log = log + "the first priority is soil moisture level";
 				Collections.sort(inputArrayList, new SortbyDsValue());
 				Collections.reverse(inputArrayList);
+				break;
+			default:
+				log = log = "the first priority is Crop stage";
+				Collections.sort(inputArrayList, new SortbyCropStage());
 		}
 		return log;
     }
-	 ***/
 
     /***
 	public String calcCropEU(ArrayList<cropType> inputArrayList) {
@@ -388,10 +391,8 @@ public class FileInput extends DatabaseConn {
 	}
     ***/
 
-    public String calcWaterReduction(double reductionPct, ArrayList<cropType> inputArray, String agentName, double waterConsertCost, int decisionMethod) {
+    public String calcWaterReduction(double reductionPct, ArrayList<cropType> inputArray, String agentName, double waterConsertCost) {
     	//Preparing.
-    	//Collections.sort(inputArray, new SortbyEU());
-    	Collections.reverse(inputArray);
     	String log = "";
     	String tempInput = "";
     	double totalWaterReqOnFarm = 0.0;
@@ -415,26 +416,6 @@ public class FileInput extends DatabaseConn {
 		}
     	
     	totalReductionRequire = totalWaterReqOnFarm * (reductionPct)/100;
-
-		switch (decisionMethod) {
-			case '0':
-				//Decision-1 CV value is the first priority.
-				decisionStr =  "The first priority is crop value";
-				Collections.sort(inputArray, new SortbyCvValue());
-				Collections.reverse(inputArray);
-				break;
-			case '1':
-				//Second decision: The Drought sensitivity.
-				decisionStr = "The first priority is crop drought sensitivity";
-				Collections.sort(inputArray, new SortbyDsValue());
-				Collections.reverse(inputArray);
-				break;
-			case '3':
-				//Third decision: Soil moisture factors.
-				decisionStr = "the first priority is soil moisture level";
-				Collections.sort(inputArray, new SortbyDsValue());
-				Collections.reverse(inputArray);
-		}
     	
     	//Reduction rules and functions.
     	for (int i = 0; i <= inputArray.size() -1; i++) {
@@ -632,10 +613,13 @@ public class FileInput extends DatabaseConn {
 		}
 	}
 	class SortbyEU implements Comparator<cropType>{
-		public int compare(cropType a, cropType b) {
-			return Double.compare(a.cropEU, b.cropEU);
+		public int compare(cropType a, cropType b) { return Double.compare(a.cropEU, b.cropEU);
 		}
 	}
+	class SortbyCropStage  implements  Comparator<cropType>{
+    	public int compare(cropType a, cropType b){ return Integer.compare(a.cropStage, b.cropStage);}
+    }
+
 	//Random value data.
 	public int getRandIntRange(int min, int max){
         if(min >= max){

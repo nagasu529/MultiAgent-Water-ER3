@@ -1,5 +1,6 @@
 package agent;
 
+import calcAuction.FileInput;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -12,15 +13,15 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import calcAuction.FileInput;
-
-public class SingleAgent extends Agent {
+public class SingleAgentTMP extends Agent {
 
     //The list of farmer who are seller (maps the water volume to its based price)
-    private SingleAgentGui myGui;
+    private SingleAgentGuiTMP myGui;
     FileInput calCrops = new FileInput();
     DecimalFormat df = new DecimalFormat("#.##");
 
@@ -40,7 +41,7 @@ public class SingleAgent extends Agent {
         System.out.println(getAID()+" is ready");
 
         //Creating catalog and running GUI
-        myGui = new SingleAgentGui(this);
+        myGui = new SingleAgentGuiTMP(this);
         myGui.show();
         //Start agent
 
@@ -58,24 +59,19 @@ public class SingleAgent extends Agent {
             fe.printStackTrace();
         }
 
-        ArrayList<calcAuction.FileInput.cropType> outputList = new ArrayList<calcAuction.FileInput.cropType>();
-
-
-
+        ArrayList<FileInput.cropType> outputList = new ArrayList<FileInput.cropType>();
         myGui.displayUI("Hello "+ farmerInfo.farmerName + "\n" + "Stage is " + farmerInfo.agentType + "\n");
-
         calCrops.randFarmFactorValues(outputList);
 
         double consentCost = calCrops.getRandDoubleRange(10000, 20000);
         //String log = calCrops.calcCropEU(outputList,0);
         //myGui.displayUI(log);
-        calCrops.calcCropEU(outputList,0);
+
         //Display Farm information source arrays.
         myGui.displayUI("Source farming information" + "\n");
         for (int i = 0; i < outputList.size(); i++){
             myGui.displayUI(outputList.get(i).toStringSource() + "\n");
         }
-
 
 
         String resultLog1 = calCrops.calcWaterReduction(5, outputList, getAID().getLocalName(), consentCost);
