@@ -165,12 +165,7 @@ public class FileInput extends DatabaseConn {
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripening");
-        //int cropStageGen = ThreadLocalRandom.current().nextInt(1, 4);
-        //int droughtSensitivityGen = ThreadLocalRandom.current().nextInt(1,3);
-        //double plotSizeGen = ThreadLocalRandom.current().nextDouble(300,1000);
-        //int soilTypeGen = ThreadLocalRandom.current().nextInt(1, 3);
-        //double consentCostGen = ThreadLocalRandom.current().nextDouble(10000, 20000);
-        
+
 		//Getting farm name and water consent information.
         int numberOfElements = 5;
         
@@ -183,16 +178,22 @@ public class FileInput extends DatabaseConn {
 			int cropStageGenIndex = rand.nextInt(cropStageGenText.size());
             cropNameGen.remove(cropNameGenIndex);
             cropStage = getRandIntRange(1, 4);
+            if(i > 3){
+            	cropStage = 1;
+			}
             droughtSensitivity = getRandIntRange(1, 3);
 
             // Adding the number of farm size.
+			plotSize = 200.00;
+			farmSizeMax = farmSizeMax + plotSize;
+			/***
 			if(numberOfElements == 4){
 				plotSize =  200 - farmSizeMax;
 			}else {
 				plotSize = getRandDoubleRange(35, 55);
 				farmSizeMax = farmSizeMax + plotSize;
 			}
-
+			***/
             yieldAmount = app.getYieldAmount(cropName);
             pricePerKg = app.getPricePerKG(cropName);
             soilType = getRandIntRange(1, 3);
@@ -451,16 +452,19 @@ public class FileInput extends DatabaseConn {
 				}else {
 					tempArray.waterReduction = tempArray.waterReqWithSoil * 0.1;
 				}
+
 			}else {
 				tempArray.waterReduction = 0.0;
 			}
-
+			/***
 			if((tempArray.waterReduction + totalReduction) > totalReductionRequire){
 				tempArray.waterReduction = totalReductionRequire - totalReduction;
 				totalReduction = totalReductionRequire;
 			}else {
 				totalReduction = totalReduction + tempArray.waterReduction;
 			}
+			***/
+			totalReduction = totalReduction + tempArray.waterReduction;
 			tempArray.waterNeed = tempArray.waterReduction;
 			/***
 			if(totalReduction > totalReductionRequire){
