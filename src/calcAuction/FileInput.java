@@ -156,9 +156,12 @@ public class FileInput extends DatabaseConn {
 
 		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed"));
 
 		//all pasture type
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed"));
 
 		//all crops and pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
@@ -177,11 +180,16 @@ public class FileInput extends DatabaseConn {
 			cropName = cropNameGen.get(cropNameGenIndex);
 			int cropStageGenIndex = rand.nextInt(cropStageGenText.size());
             cropNameGen.remove(cropNameGenIndex);
-            cropStage = getRandIntRange(1, 4);
-            if(i > 3){
+            //cropStage = getRandIntRange(1, 4);
+			cropStage = 1;
+			if(i > 3){
             	cropStage = 1;
 			}
-            droughtSensitivity = getRandIntRange(1, 3);
+            //droughtSensitivity = getRandIntRange(1, 3);
+			droughtSensitivity = i +1;
+			if(droughtSensitivity >=3){
+				droughtSensitivity = 3;
+			}
 
             // Adding the number of farm size.
 			plotSize = 200.00;
@@ -274,11 +282,11 @@ public class FileInput extends DatabaseConn {
         int  value;
     	if (cropName.equals("Pasture")){
             if (cropStage == 1)
-                value = 10;
+                value = 30;
             else if (cropStage == 2)
             	value = 20;
             else
-            	value = 30;
+            	value = 10;
         }
         else{
         	value = (cropStage *10) + droughtSensitivity;
@@ -585,13 +593,13 @@ public class FileInput extends DatabaseConn {
         	public String toStringSource(){
         	String tempCropstage = "";
         	if (this.cropStage == 1){
-        		tempCropstage = "Initial stage";
+				tempCropstage = "Flowering stage";
 			}else if(this.cropStage == 2){
         		tempCropstage = "Development stage";
 			}else if(this.cropStage == 3){
         		tempCropstage = "Germination stage";
 			}else {
-        		tempCropstage = "Flowering stage";
+				tempCropstage = "Initial stage";
 			}
         	return "Crop name : " + this.cropName + "  Planting size: " + df.format(this.plotSize) + "  Crop Stage: " + tempCropstage + "  Water Requirement: " + df.format(this.waterReqWithSoil) + "  Profit before reduction: " + df.format(this.cvValue) +
 					"  Kc stage value: " + df.format(this.kcStageValue) + "  Soil moisture contain: " + df.format(this.soilWaterContainValue);
