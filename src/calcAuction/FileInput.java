@@ -167,7 +167,8 @@ public class FileInput extends DatabaseConn {
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
-        List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripening");
+        List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripen" +
+				"ing");
 
 		//Getting farm name and water consent information.
         int numberOfElements = 5;
@@ -181,7 +182,7 @@ public class FileInput extends DatabaseConn {
 			int cropStageGenIndex = rand.nextInt(cropStageGenText.size());
             cropNameGen.remove(cropNameGenIndex);
             //cropStage = getRandIntRange(1, 4);
-			cropStage = 1;
+			cropStage = i + 1;
 			if(i > 3){
             	cropStage = 1;
 			}
@@ -226,9 +227,9 @@ public class FileInput extends DatabaseConn {
 			outputInArrayList.add(new cropType(cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
 					pricePerKg, soilType, irrigationTypeValue, kcStageValue, literPerSecHec, waterReq, soilWaterContainValue,
 					waterReqWithSoil, waterReduction, productValueLost, dsValue, cvValue, stValue, cropEU, costPerKg, profitLost, grossMargin, waterNeed));
-			System.out.println("Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
+			System.out.println("No.: " + i + "  Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
 					"  Price per kg. : " + df.format(pricePerKg) + "  Crop stage: " + df.format(cropStage) + "  kc Stage Value: " + df.format(kcStageValue) + "  water Req with Soil: " + df.format(waterReqWithSoil) + " soil water contain: " + df.format(soilWaterContainValue) +
-					" Profit value: "  + df.format(cvValue));
+					" Profit value: "  + df.format(cvValue) + "  Drought sensitivity: " + df.format(droughtSensitivity) + "\n" + "Ds value: " + df.format(dsValue));
 		}
 	}
 	
@@ -323,19 +324,22 @@ public class FileInput extends DatabaseConn {
 			case '0':
 				//Decision-1 CV value is the first priority.
 				log = log + "The first priority is crop value";
-				Collections.sort(inputArrayList, new SortbyCvValue());
+				cropEU = (cvValue * 0.5) + (dsValue * 0.25) + (stValue * 0.25);
+				Collections.sort(inputArrayList, new SortbyEU());
 				Collections.reverse(inputArrayList);
 				break;
 			case '1':
 				//Second decision: The Drought sensitivity.
 				log = log + "The first priority is crop drought sensitivity";
-				Collections.sort(inputArrayList, new SortbyDsValue());
+				cropEU = (cvValue * 0.25) + (dsValue * 0.5) + (stValue * 0.25);
+				Collections.sort(inputArrayList, new SortbyEU());
 				Collections.reverse(inputArrayList);
 				break;
 			case '3':
 				//Third decision: Soil moisture factors.
 				log = log + "the first priority is soil moisture level";
-				Collections.sort(inputArrayList, new SortbyDsValue());
+				cropEU = (cvValue * 0.25) + (dsValue * 0.25) + (stValue * 0.5);
+				Collections.sort(inputArrayList, new SortbyEU());
 				Collections.reverse(inputArrayList);
 				break;
 			default:
@@ -603,6 +607,11 @@ public class FileInput extends DatabaseConn {
 			}
         	return "Crop name : " + this.cropName + "  Planting size: " + df.format(this.plotSize) + "  Crop Stage: " + tempCropstage + "  Water Requirement: " + df.format(this.waterReqWithSoil) + "  Profit before reduction: " + df.format(this.cvValue) +
 					"  Kc stage value: " + df.format(this.kcStageValue) + "  Soil moisture contain: " + df.format(this.soilWaterContainValue);
+			}
+
+			public String toStringValidation(){
+        	String tempValidationTxt = "";
+        	return " Crop name: " + this.cropName + "  CVvalue: " + df.format(this.cvValue) + "Soil type: " + df.format(this.soilType) + "  STvalue: " + df.format(this.stValue) + " Drought Sensitivity: " + df.format(this.droughtSensitivity) + "  DSValue: " + df.format(this.dsValue);
 			}
     }
 	

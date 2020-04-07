@@ -76,7 +76,9 @@ public class SingleAgent extends Agent {
             myGui.displayUI(outputList.get(i).toStringSource() + "\n");
         }
 
-
+        for(int i = 0; i < outputList.size() - 1; i++){
+            myGui.displayUI(outputList.get(i).toStringValidation() + "\n");
+        }
 
         String resultLog1 = calCrops.calcWaterReduction(5, outputList, getAID().getLocalName(), consentCost);
         myGui.displayUI(resultLog1);
