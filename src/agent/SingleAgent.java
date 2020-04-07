@@ -76,8 +76,8 @@ public class SingleAgent extends Agent {
             myGui.displayUI(outputList.get(i).toStringSource() + "\n");
         }
 
-        for(int i = 0; i < outputList.size() - 1; i++){
-            myGui.displayUI(outputList.get(i).toStringValidation() + "\n");
+        for(int i = 0; i < outputList.size(); i++){
+            myGui.displayUI("\n" + outputList.get(i).toStringValidation() + "\n");
         }
 
         String resultLog1 = calCrops.calcWaterReduction(5, outputList, getAID().getLocalName(), consentCost);
@@ -91,6 +91,8 @@ public class SingleAgent extends Agent {
 
         String resultLog4 = calCrops.calcWaterReduction(20, outputList, getAID().getLocalName(), consentCost);
         myGui.displayUI(resultLog4);
+
+        doSuspend();
 
         //Add a TickerBehaviour that chooses agent status to buyer or seller.
         addBehaviour(new TickerBehaviour(this, 50000){

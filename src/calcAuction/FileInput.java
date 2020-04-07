@@ -24,6 +24,7 @@ public class FileInput extends DatabaseConn {
 	DatabaseConn app = new DatabaseConn();
 	Random rand = new Random();
 
+	private int order;
 	private String farmName;
 	private String districName;
 	private Double farmSize;
@@ -87,6 +88,7 @@ public class FileInput extends DatabaseConn {
 		
 		while (listSize != 1) {
 			String[] tempInput = inputList.get(listSize -1).split(separator);
+			order = listSize - 1;
 			cropName = tempInput[0];
 			if(tempInput[0].equals("Pasture")) {
 				if(tempInput[0].equals("Pasture") && tempInput[1].equals("Initial")) {
@@ -136,7 +138,7 @@ public class FileInput extends DatabaseConn {
             waterReqWithSoil = calcWaterReqWithSoil(waterReq, soilWaterContainValue);
             totalWaterReq = totalWaterReq + waterReqWithSoil;
 			
-			outputInArrayList.add(new cropType(cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
+			outputInArrayList.add(new cropType(order, cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
 					pricePerKg, soilType, irrigationTypeValue, kcStageValue, literPerSecHec, waterReq, soilWaterContainValue,
 					waterReqWithSoil, waterReduction, productValueLost, dsValue, cvValue, stValue, cropEU, costPerKg, profitLost, grossMargin, waterNeed));
 			listSize--;
@@ -177,6 +179,7 @@ public class FileInput extends DatabaseConn {
 		//waterConsentCost = getRandDoubleRange(10000, 20000);
 		
 		for (int i = 0; i < numberOfElements; i++) {
+			order = i + 1;
 			int cropNameGenIndex = rand.nextInt(cropNameGen.size());
 			cropName = cropNameGen.get(cropNameGenIndex);
 			int cropStageGenIndex = rand.nextInt(cropStageGenText.size());
@@ -224,10 +227,10 @@ public class FileInput extends DatabaseConn {
             soilWaterContainValue = calcSoilMoistureValue(15, 30);
             waterReqWithSoil = calcWaterReqWithSoil(waterReq, soilWaterContainValue);
             
-			outputInArrayList.add(new cropType(cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
+			outputInArrayList.add(new cropType(order, cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
 					pricePerKg, soilType, irrigationTypeValue, kcStageValue, literPerSecHec, waterReq, soilWaterContainValue,
 					waterReqWithSoil, waterReduction, productValueLost, dsValue, cvValue, stValue, cropEU, costPerKg, profitLost, grossMargin, waterNeed));
-			System.out.println("No.: " + i + "  Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
+			System.out.println("No.: " + order + "  Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
 					"  Price per kg. : " + df.format(pricePerKg) + "  Crop stage: " + df.format(cropStage) + "  kc Stage Value: " + df.format(kcStageValue) + "  water Req with Soil: " + df.format(waterReqWithSoil) + " soil water contain: " + df.format(soilWaterContainValue) +
 					" Profit value: "  + df.format(cvValue) + "  Drought sensitivity: " + df.format(droughtSensitivity) + "\n" + "Ds value: " + df.format(dsValue));
 		}
@@ -532,6 +535,7 @@ public class FileInput extends DatabaseConn {
     }
     
 	public class cropType{
+    	int order;
         String cropName;
         int cropStage;
         int droughtSensitivity;
@@ -556,10 +560,11 @@ public class FileInput extends DatabaseConn {
         double grossMarginValue;
         double waterNeed;
 
-        cropType(String cropName, int cropStage, int droughtSensitivity, double plotSize, double yieldAmount, double pricePerKg, int soilType,
+        cropType(int order, String cropName, int cropStage, int droughtSensitivity, double plotSize, double yieldAmount, double pricePerKg, int soilType,
         		double irrigationType, double kcStageValue, double literPerSecHec, double waterReq, double soilWaterContainValue, 
         		double waterReqWithSoil, double waterReduction, double productValueLost, int dsValue, double cvValue, double stValue,
         		double cropEU, double costPerKg, double profitLostPct, double grossMarginValue, double waterNeed) {
+        	this.order = order;
             this.cropName = cropName;
             this.cropStage = cropStage;
             this.droughtSensitivity = droughtSensitivity;
@@ -611,7 +616,7 @@ public class FileInput extends DatabaseConn {
 
 			public String toStringValidation(){
         	String tempValidationTxt = "";
-        	return " Crop name: " + this.cropName + "  CVvalue: " + df.format(this.cvValue) + "Soil type: " + df.format(this.soilType) + "  STvalue: " + df.format(this.stValue) + " Drought Sensitivity: " + df.format(this.droughtSensitivity) + "  DSValue: " + df.format(this.dsValue);
+        	return "Order: " + this.order + " Crop name: " + this.cropName + "  CVvalue: " + df.format(this.cvValue) + "Soil type: " + df.format(this.soilType) + "  STvalue: " + df.format(this.stValue) + " Drought Sensitivity: " + df.format(this.droughtSensitivity) + "  DSValue: " + df.format(this.dsValue);
 			}
     }
 	
