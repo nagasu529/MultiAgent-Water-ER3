@@ -527,16 +527,16 @@ public class DatabaseConn {
             cropStage = "Ripening";
         }
 
-        String sql = "SELECT Flowering, Germination, Development, Ripening, MaxCropHight FROM Duration WHERE Crop=?";
+        String sql = "SELECT Germination, Development, Flowering, Ripening, MaxCropHight FROM Duration WHERE Crop=?";
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
             //Set the value
             pstmt.setString(1, cropName);
             //
             ResultSet rs = pstmt.executeQuery();
-            floweringValue = rs.getDouble("Flowering");
             germinationValue = rs.getDouble("Germination");
             developmentValue = rs.getDouble("Development");
+            floweringValue = rs.getDouble("Flowering");
             ripeningValue = rs.getDouble("Ripening");
             hight = rs.getDouble("MaxCropHight");
             KcCurrent = rs.getDouble(cropStage);
@@ -547,7 +547,7 @@ public class DatabaseConn {
         }
 
         //Calculating Min and Max Kc
-        double[] valueList = {floweringValue, germinationValue, developmentValue, ripeningValue};
+        double[] valueList = {germinationValue, developmentValue, floweringValue, ripeningValue};
         sortAlgor(valueList);
         KcMax = valueList[valueList.length -1];
         KcMin = valueList[0];
