@@ -158,15 +158,18 @@ public class FileInput extends DatabaseConn {
 
 		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed","Hybrid carrot seed"));
 
 		//all pasture type
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Oil seed", "Wheat", "Maize"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Fodder beet", "Perennial ryegrass"));
 
 		//all crops and pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Fodder beet", "Hybrid carrot seed", "Maize", "Oil seed"));
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("Flowering", "Germination", "Development", "Ripen" +
@@ -185,18 +188,33 @@ public class FileInput extends DatabaseConn {
 			int cropStageGenIndex = rand.nextInt(cropStageGenText.size());
             cropNameGen.remove(cropNameGenIndex);
             //cropStage = getRandIntRange(1, 4);
-			cropStage = i + 1;
+			/***
+			if(cropName == "Oil seed"){
+				cropStage = 1;
+				soilType = 1;
+			}else if (cropName == "Wheat"){
+				cropStage = 2;
+				soilType = 2;
+			}else if(cropName == "Maize"){
+				cropStage = 4;
+				soilType = 3;
+			}
+			 ***/
+
+
+			 cropStage = i + 1;
 			if(i > 3){
-            	cropStage = 1;
+				cropStage = getRandIntRange(1, 4);
 			}
             //droughtSensitivity = getRandIntRange(1, 3);
 			droughtSensitivity = i +1;
-			if(droughtSensitivity >=3){
-				droughtSensitivity = 3;
+			if(droughtSensitivity >3){
+				droughtSensitivity = getRandIntRange(1, 3);;
 			}
 
+
             // Adding the number of farm size.
-			plotSize = 200.00;
+			plotSize = 100.00;
 			farmSizeMax = farmSizeMax + plotSize;
 			/***
 			if(numberOfElements == 4){
@@ -324,30 +342,36 @@ public class FileInput extends DatabaseConn {
 		String log = "";
 
 		switch (decisionMethod) {
-			case '0':
+			case 0:
 				//Decision-1 CV value is the first priority.
 				log = log + "The first priority is crop value";
-				cropEU = (cvValue * 0.5) + (dsValue * 0.25) + (stValue * 0.25);
+				for (int i = 0; i < inputArrayList.size(); i++){
+					inputArrayList.get(i).cropEU = (inputArrayList.get(i).cvValue * 0.5) + (inputArrayList.get(i).dsValue * 0.25) + (inputArrayList.get(i).stValue * 0.25);
+				}
 				Collections.sort(inputArrayList, new SortbyEU());
-				Collections.reverse(inputArrayList);
+				//Collections.reverse(inputArrayList);
 				break;
-			case '1':
+			case 1:
 				//Second decision: The Drought sensitivity.
 				log = log + "The first priority is crop drought sensitivity";
-				cropEU = (cvValue * 0.25) + (dsValue * 0.5) + (stValue * 0.25);
+				for (int i = 0; i < inputArrayList.size(); i++){
+					inputArrayList.get(i).cropEU = (inputArrayList.get(i).cvValue * 0.25) + (inputArrayList.get(i).dsValue * 0.5) + (inputArrayList.get(i).stValue * 0.25);
+				}
 				Collections.sort(inputArrayList, new SortbyEU());
-				Collections.reverse(inputArrayList);
+				//Collections.reverse(inputArrayList);
 				break;
-			case '3':
+			case 2:
 				//Third decision: Soil moisture factors.
 				log = log + "the first priority is soil moisture level";
-				cropEU = (cvValue * 0.25) + (dsValue * 0.25) + (stValue * 0.5);
+				for (int i = 0; i < inputArrayList.size(); i++){
+					inputArrayList.get(i).cropEU = (inputArrayList.get(i).cvValue * 0.25) + (inputArrayList.get(i).dsValue * 0.25) + (inputArrayList.get(i).stValue * 0.5);
+				}
 				Collections.sort(inputArrayList, new SortbyEU());
-				Collections.reverse(inputArrayList);
+				//Collections.reverse(inputArrayList);
 				break;
 			default:
 				log = log = "the first priority is Crop stage";
-				Collections.sort(inputArrayList, new SortbyCropStage());
+				//Collections.sort(inputArrayList, new SortbyCropStage());
 		}
 		return log;
     }
@@ -425,6 +449,7 @@ public class FileInput extends DatabaseConn {
     	String decisionStr = "";
 
     	double totalCvValueWithoutAlgor = 0.0;
+
     	
     	for (int i = 0; i <= inputArray.size() - 1; i++) {
     		totalWaterReqOnFarm = totalWaterReqOnFarm + inputArray.get(i).waterReqWithSoil;
@@ -522,7 +547,7 @@ public class FileInput extends DatabaseConn {
 				+ "Total gross margin Value :  " + totalFarmGrossMargin/5 + "\n" + "Total profit loss after reduction (%):  " + (100 - (totalCvAfterReduction * 100)/totalFarmCvValue) +  "  Value: " + totalCvAfterReduction + "\n" +
 					"Total profit value before reduction : " + totalFarmCvValue + "  Total profit value after reduction without system (%): " + (100 -  (totalCvValueWithoutAlgor * 100)/totalFarmCvValue) + totalCvValueWithoutAlgor + "\n";
 		log = log + "\n";
-		
+
 		for (cropType e : inputArray) {
 			log = log + e.toString()+ "\n";
 		}
@@ -602,21 +627,21 @@ public class FileInput extends DatabaseConn {
         	public String toStringSource(){
         	String tempCropstage = "";
         	if (this.cropStage == 1){
-				tempCropstage = "Flowering stage";
+				tempCropstage = "Ripening";
 			}else if(this.cropStage == 2){
-        		tempCropstage = "Development stage";
+        		tempCropstage = "Flowering stage";
 			}else if(this.cropStage == 3){
-        		tempCropstage = "Germination stage";
+        		tempCropstage = "Development stage";
 			}else {
-				tempCropstage = "Initial stage";
+				tempCropstage = "Germination stage";
 			}
-        	return "Crop name : " + this.cropName + "  Planting size: " + df.format(this.plotSize) + "  Crop Stage: " + tempCropstage + "  Water Requirement: " + df.format(this.waterReqWithSoil) + "  Profit before reduction: " + df.format(this.cvValue) +
+        	return "Order: " + this.order + "  Crop name : " + this.cropName + "  Planting size: " + df.format(this.plotSize) + "  Crop Stage: " + tempCropstage + "  Water Requirement: " + df.format(this.waterReqWithSoil) + "  Profit before reduction: " + df.format(this.cvValue) +
 					"  Kc stage value: " + df.format(this.kcStageValue) + "  Soil moisture contain: " + df.format(this.soilWaterContainValue);
 			}
 
 			public String toStringValidation(){
         	String tempValidationTxt = "";
-        	return "Order: " + this.order + " Crop name: " + this.cropName + "  CVvalue: " + df.format(this.cvValue) + "Soil type: " + df.format(this.soilType) + "  STvalue: " + df.format(this.stValue) + " Drought Sensitivity: " + df.format(this.droughtSensitivity) + "  DSValue: " + df.format(this.dsValue);
+        	return "Order: " + this.order + " Crop name: " + this.cropName + "  CropEU: " + df.format(this.cropEU) + "  CVvalue: " + df.format(this.cvValue) + "  Soil type: " + df.format(this.soilType) + "  STvalue: " + df.format(this.stValue) + " Drought Sensitivity: " + df.format(this.droughtSensitivity) + "  DSValue: " + df.format(this.dsValue);
 			}
     }
 	

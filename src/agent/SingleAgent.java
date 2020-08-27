@@ -69,9 +69,10 @@ public class SingleAgent extends Agent {
         double consentCost = calCrops.getRandDoubleRange(10000, 20000);
         //String log = calCrops.calcCropEU(outputList,0);
         //myGui.displayUI(log);
-        calCrops.calcCropEU(outputList,1);
+        calCrops.calcCropEU(outputList,0);
         //Display Farm information source arrays.
         myGui.displayUI("Source farming information" + "\n");
+
         for (int i = 0; i < outputList.size(); i++){
             myGui.displayUI(outputList.get(i).toStringSource() + "\n");
         }
