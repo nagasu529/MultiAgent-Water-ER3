@@ -307,10 +307,10 @@ public class DatabaseConn {
         }
     }
 
-    public void KcCalculation(String cropName, String cropPeriod){
-
-        //temp value
-        double tmpCal = 0.0;
+    public Double KcCalculation(String cropName, String cropPeriod){
+        KcValue = 0;
+        avgKc = 0;
+        double tmp = 0.0;
 
         String sql = "SELECT Duration.Crop, Duration.Initial, Period.initialDay, Duration.CropDev, Period.CropDevDay, "
                 + "Duration.Mid, Period.MidDay, Duration.Late, Period.LateDay, Period.TotalDay FROM Duration INNER JOIN "
@@ -323,6 +323,7 @@ public class DatabaseConn {
             pstmt.setString(2, cropPeriod);
             ResultSet rs = pstmt.executeQuery();
 
+            /***
             //loop through the result set
             while (rs.next()) {
                 avgKc = avgKc + (rs.getDouble("Initial")*rs.getDouble("InitialDay")) +
@@ -330,10 +331,15 @@ public class DatabaseConn {
                         (rs.getDouble("Mid")*rs.getDouble("MidDay")) +
                         (rs.getDouble("Late")*rs.getDouble("LateDay"));
             }
-            System.out.println(avgKc);
+             ***/
+            //getting result from database
+            tmp = rs.getDouble("cropPeriod");
+            KcValue = tmp;
+            System.out.println(KcValue);
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
+        return KcValue;
     }
 
     //Irrigation rate from FAO white paper book
