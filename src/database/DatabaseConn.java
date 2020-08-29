@@ -47,8 +47,8 @@ public class DatabaseConn {
     //Database connect for calculationg ET0
     private Connection connect(){
         //SQlite connietion string
-    	//String url = "jdbc:sqlite:/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Macbook
-        String url = "jdbc:sqlite:F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Home PC
+    	String url = "jdbc:sqlite:/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Macbook
+        //String url = "jdbc:sqlite:F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Home PC
         //String url = "jdbc:sqlite:C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite";  //Office
         Connection conn = null;
         try {
@@ -310,31 +310,18 @@ public class DatabaseConn {
     public Double KcCalculation(String cropName, String cropPeriod){
         KcValue = 0;
         avgKc = 0;
-        double tmp = 0.0;
-
+        /***
         String sql = "SELECT Duration.Crop, Duration.Initial, Period.initialDay, Duration.CropDev, Period.CropDevDay, "
                 + "Duration.Mid, Period.MidDay, Duration.Late, Period.LateDay, Period.TotalDay FROM Duration INNER JOIN "
-                + "Period ON Duration.Crop = period.Crop WHERE Period.Crop = ? AND Period.period = ?;";
+                + "Period ON Duration.Crop = period.Crop WHERE Period.Crop = ? AND Period.period = ?;"
+         ***/
+
+        String sql = String.format(String.format("SELECT * FROM Duration WHERE Crop='%s'", cropName));
+        //System.out.println(sql);
         try(Connection conn = this.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
-
-            //set value
-            pstmt.setString(1,cropName);
-            pstmt.setString(2, cropPeriod);
-            ResultSet rs = pstmt.executeQuery();
-
-            /***
-            //loop through the result set
-            while (rs.next()) {
-                avgKc = avgKc + (rs.getDouble("Initial")*rs.getDouble("InitialDay")) +
-                        (rs.getDouble("CropDev")*rs.getDouble("CropDevDay")) +
-                        (rs.getDouble("Mid")*rs.getDouble("MidDay")) +
-                        (rs.getDouble("Late")*rs.getDouble("LateDay"));
-            }
-             ***/
-            //getting result from database
-            tmp = rs.getDouble("cropPeriod");
-            KcValue = tmp;
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)){
+                KcValue = rs.getDouble(cropPeriod);
             System.out.println(KcValue);
         }catch(SQLException e){
             System.out.println(e.getMessage());
@@ -580,9 +567,9 @@ public class DatabaseConn {
 
         //result of Kc value which include irrigation system and soil type data
         KcValue = KcCurrent + temp;
-        //System.out.println("Kr is " + temp);
-        //System.out.println("Kc based current is" + KcCurrent);
-        //System.out.println("Kc Stage value is " + KcValue);
+        System.out.println("Kr is " + temp);
+        System.out.println("Kc based current is" + KcCurrent);
+        System.out.println("Kc Stage value is " + KcValue);
         return KcValue;
     }
 

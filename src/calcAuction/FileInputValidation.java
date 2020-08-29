@@ -208,6 +208,7 @@ public class FileInputValidation extends DatabaseConn {
             //app.KcStageValue(cropName, cropStageGenText.get(cropStage - 1), irrigationTypeGen.get(irrigationTypeIndex));
 
 			app.KcCalculation(cropName,cropStageGenText.get(cropStage - 1));
+			KcValue = app.KcValue;
 
 			//kcStageValue = app.KcValue;
             costPerKg = app.getCostPerKg(cropName);
