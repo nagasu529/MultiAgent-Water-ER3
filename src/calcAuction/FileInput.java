@@ -127,7 +127,7 @@ public class FileInput extends DatabaseConn {
 			}
 			app.getIrrigationTypeValue(tempInput[8]);
 			irrigationTypeValue = app.irrigationRate;
-			app.KcStageValue(cropName, tempInput[1], tempInput[8]);
+			app.KcStageValue(cropName, tempInput[1], tempInput[8], soilType, droughtSensitivity);
 			kcStageValue = app.KcValue;
 			dsValue = calcDSValue(cropName, cropStage, droughtSensitivity);
             cvValue = calcCVValue(plotSize, yieldAmount, pricePerKg);
@@ -231,7 +231,7 @@ public class FileInput extends DatabaseConn {
             String irrigationType = irrigationTypeGen.get(irrigationTypeIndex);
             app.getIrrigationTypeValue(irrigationTypeGen.get(irrigationTypeIndex));
             irrigationTypeValue = app.irrigationRate;
-            app.KcStageValue(cropName, cropStageGenText.get(cropStage - 1), irrigationTypeGen.get(irrigationTypeIndex));
+            app.KcStageValue(cropName, cropStageGenText.get(cropStage - 1), irrigationTypeGen.get(irrigationTypeIndex), soilType, droughtSensitivity);
             kcStageValue = app.KcValue;
             costPerKg = app.getCostPerKg(cropName);
                         

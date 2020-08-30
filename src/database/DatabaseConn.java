@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -18,6 +18,7 @@ public class DatabaseConn {
     public double stdET0 = 7.0;
     public double avgKc = 0.0;
     public double KcValue = 0.0;
+    public double KcStageValue = 0.0;
     public double KcBased = 0.0;
     public double irrigationRate = 0.0;
     public double grossMaginValue = 0.0;
@@ -47,8 +48,8 @@ public class DatabaseConn {
     //Database connect for calculationg ET0
     private Connection connect(){
         //SQlite connietion string
-    	String url = "jdbc:sqlite:/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Macbook
-        //String url = "jdbc:sqlite:F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Home PC
+    	//String url = "jdbc:sqlite:/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Macbook
+        String url = "jdbc:sqlite:F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Home PC
         //String url = "jdbc:sqlite:C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite";  //Office
         Connection conn = null;
         try {
@@ -490,7 +491,7 @@ public class DatabaseConn {
 
     //Original KC calculation (without Ke soil water wetting data).
 
-    public Double KcStageValue(String cropName, String cropStage, String irrigationType){
+    public Double KcStageValue(String cropName, String cropStage, String irrigationType, int soilType, int droughtSensitivity){
         //Temp calculation value
         KcValue = 0.0;
         double KcMax = 0.0;
@@ -502,6 +503,29 @@ public class DatabaseConn {
         double developmentValue = 0.0;
         double ripeningValue = 0.0;
         double hight = 0.0;
+        double KrValue = 0.0;
+        String soilTypeStr = "";
+        String droughtSenStr = "";
+
+        if(soilType == 1){
+            soilTypeStr = "heavy";
+        }else if(soilType == 2){
+            soilTypeStr = "medium";
+        }else {
+            soilTypeStr = "light";
+        }
+
+        if(droughtSensitivity == 1){
+            droughtSenStr = "low";
+        }else if(droughtSensitivity == 2){
+            droughtSenStr = "medium";
+        }else {
+            droughtSenStr = "high";
+        }
+
+        //Kr calculation
+        KrValue = krCalValue(soilTypeStr,droughtSenStr);
+
         //double kWater = 0.0;
 
         //Phasing parameters
@@ -555,29 +579,27 @@ public class DatabaseConn {
         Fc = Fvalue[0] * KcMax;
 
         //Ke calculation
-        double Ke = keCal(KcMax, KcCurrent);
+        double Ke = keCal(KrValue, KcMax, KcCurrent);
 
         //comparing Ke and Fc
         double temp = 0.0;
-        if (Ke <= Fc) {
+        if (Ke < Fc) {
             temp = Ke;
         } else {
             temp = Fc;
         }
 
         //result of Kc value which include irrigation system and soil type data
-        KcValue = KcCurrent + temp;
+        KcStageValue = KcCurrent + temp;
         System.out.println("Kr is " + temp);
         System.out.println("Kc based current is" + KcCurrent);
-        System.out.println("Kc Stage value is " + KcValue);
-        return KcValue;
+        System.out.println("Kc Stage value is " + KcStageValue);
+
+        return KcStageValue;
     }
 
 
-    //Input generater data from database.
-    public void randFarmInputData(String farmerName){
 
-    }
 
 
 //Method session
@@ -604,9 +626,52 @@ public class DatabaseConn {
         return temp;
     }
 
-    static double keCal(double KcMax, double KcCurrent){
-        double temp = (KcMax - KcCurrent);
+    static double keCal(double krValue, double KcMax, double KcCurrent){
+        double temp = krValue * (KcMax - KcCurrent);
         return temp;
+    }
+
+    static double krCalValue(String soilType, String droughtSensitivity){
+        double tmp = 0.0;
+        //Drought Sensitivity array
+        Double[] soilHeavy = {0.9, 0.7, 0.6};
+        Double[] soilMedium = {0.7, 0.79, 0.94};
+        Double[] soilLight = {0.95, 0.85, 0.8};
+
+        //heavy soil type
+        if(soilType == "heavy"){
+           if(droughtSensitivity == "high"){
+               tmp = soilHeavy[0];
+           }else if(droughtSensitivity == "medium"){
+               tmp = soilHeavy[1];
+           }else {
+               tmp = soilHeavy[2];
+           }
+        }
+
+        //medium soil type
+        if(soilType == "medium"){
+            if(droughtSensitivity == "high"){
+                tmp = soilMedium[0];
+            }else if(droughtSensitivity == "medium"){
+                tmp = soilMedium[1];
+            }else {
+                tmp = soilMedium[2];
+            }
+        }
+
+        //light soil type
+        if(soilType == "light"){
+            if(droughtSensitivity == "high"){
+                tmp = soilLight[0];
+            }else if(droughtSensitivity == "medium"){
+                tmp = soilLight[1];
+            }else {
+                tmp = soilLight[2];
+            }
+        }
+
+        return tmp;
     }
 
 }

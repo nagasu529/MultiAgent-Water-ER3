@@ -120,7 +120,7 @@ public class FileInputValidation extends DatabaseConn {
 			}
 			app.getIrrigationTypeValue(tempInput[8]);
 			irrigationTypeValue = app.irrigationRate;
-			app.KcStageValue(cropName, tempInput[1], tempInput[8]);
+			app.KcStageValue(cropName, tempInput[1], tempInput[8], soilType, droughtSensitivity);
 			kcStageValue = app.KcValue;
 			dsValue = calcDSValue(cropName, cropStage, droughtSensitivity);
             cvValue = calcCVValue(plotSize, yieldAmount, pricePerKg);
@@ -205,12 +205,12 @@ public class FileInputValidation extends DatabaseConn {
             String irrigationType = irrigationTypeGen.get(irrigationTypeIndex);
             app.getIrrigationTypeValue(irrigationTypeGen.get(irrigationTypeIndex));
             irrigationTypeValue = app.irrigationRate;
-            //app.KcStageValue(cropName, cropStageGenText.get(cropStage - 1), irrigationTypeGen.get(irrigationTypeIndex));
+            app.KcStageValue(cropName, cropStageGenText.get(cropStage - 1), irrigationTypeGen.get(irrigationTypeIndex),soilType, droughtSensitivity);
+			kcStageValue = app.KcStageValue;
+			//app.KcCalculation(cropName,cropStageGenText.get(cropStage - 1));
+			//KcValue = app.KcValue;
 
-			app.KcCalculation(cropName,cropStageGenText.get(cropStage - 1));
-			KcValue = app.KcValue;
 
-			//kcStageValue = app.KcValue;
             costPerKg = app.getCostPerKg(cropName);
                         
             //Generate eET0 on Summer
@@ -218,13 +218,13 @@ public class FileInputValidation extends DatabaseConn {
             dsValue = calcDSValue(cropName, cropStage, droughtSensitivity);
             cvValue = calcCVValue(plotSize, yieldAmount, pricePerKg);
 			stValue = calcSTValue(plotSize, soilType);
-			waterReq = calcWaterReqPerDay(KcValue, valueET, plotSize);
-			//waterReq = calcWaterReqPerDay(kcStageValue, valueET, plotSize);
+			//waterReq = calcWaterReqPerDay(KcValue, valueET, plotSize);
+			waterReq = calcWaterReqPerDay(kcStageValue, valueET, plotSize);
             literPerSecHec = calcLitePerSecHecDay(waterReq, plotSize);
             soilWaterContainValue = calcSoilMoistureValue(15, 30);
             waterReqWithSoil = calcWaterReqWithSoil(waterReq, soilWaterContainValue);
             
-			/***
+
             outputInArrayList.add(new cropType(order, cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
 					pricePerKg, soilType, irrigationTypeValue, kcStageValue, literPerSecHec, waterReq, soilWaterContainValue,
 					waterReqWithSoil, waterReduction, productValueLost, dsValue, cvValue, stValue, cropEU, costPerKg, profitLost, grossMargin, waterNeed));
@@ -232,13 +232,14 @@ public class FileInputValidation extends DatabaseConn {
 			 System.out.println("No.: " + order + "  Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
 			 "  Price per kg. : " + df.format(pricePerKg) + "  Crop stage: " + df.format(cropStage) + "  kc Stage Value: " + df.format(kcStageValue) + "  water Req with Soil: " + df.format(waterReqWithSoil) + " soil water contain: " + df.format(soilWaterContainValue) +
 			 " Profit value: "  + df.format(cvValue) + "  Drought sensitivity: " + df.format(droughtSensitivity) + "\n" + "Ds value: " + df.format(dsValue));
-			 ***/
+			/***
 			outputInArrayList.add(new cropType(order, cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
 					pricePerKg, soilType, irrigationTypeValue, KcValue, literPerSecHec, waterReq, soilWaterContainValue,
 					waterReqWithSoil, waterReduction, productValueLost, dsValue, cvValue, stValue, cropEU, costPerKg, profitLost, grossMargin, waterNeed));
 			System.out.println("No.: " + order + "  Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
 					"  Price per kg. : " + df.format(pricePerKg) + "  Crop stage: " + df.format(cropStage) + "  kc Stage Value: " + df.format(KcValue) + "  water Req with Soil: " + df.format(waterReqWithSoil) + " soil water contain: " + df.format(soilWaterContainValue) +
 					" Profit value: "  + df.format(cvValue) + "  Drought sensitivity: " + df.format(droughtSensitivity) + "\n" + "Ds value: " + df.format(dsValue));
+			 ***/
 		}
 	}
 	
@@ -299,7 +300,7 @@ public class FileInputValidation extends DatabaseConn {
             	value = 10;
         }
         else{
-        	value = (cropStage *10) + droughtSensitivity;
+        	value = (cropStage * 10) + droughtSensitivity;
         }
         return value;
     }
