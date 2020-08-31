@@ -48,8 +48,8 @@ public class DatabaseConn {
     //Database connect for calculationg ET0
     private Connection connect(){
         //SQlite connietion string
-    	String url = "jdbc:sqlite:/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Macbook
-        //String url = "jdbc:sqlite:F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Home PC
+    	//String url = "jdbc:sqlite:/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Macbook
+        String url = "jdbc:sqlite:F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite"; //Home PC
         //String url = "jdbc:sqlite:C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/db/FarmDB.sqlite";  //Office
         Connection conn = null;
         try {
