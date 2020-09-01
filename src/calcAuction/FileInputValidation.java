@@ -151,7 +151,7 @@ public class FileInputValidation extends DatabaseConn {
 
 		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
 
 		//all pasture type
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
@@ -159,16 +159,17 @@ public class FileInputValidation extends DatabaseConn {
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed"));
 
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Wheat", "Wheat", "Wheat", "Wheat", "Wheat"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Peanut", "Peanut", "Peanut", "Maize", "Maize", "Maize"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Oil seed", "Oil seed", "Oil seed", "Maize", "Maize", "Maize"));
 
 		//all crops and pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Maize", "Peanut", "Oil seed", "Pasture", "Pasture"));
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
-        List<String> cropStageGenText = Arrays.asList("Germination", "Development","Flowering", "Ripening");
+        List<String> cropStageGenText = Arrays.asList("","Germination", "Development","Flowering", "Ripening");
 
 		//Getting farm name and water consent information.
-        int numberOfElements = 5;
+        int numberOfElements = 6;
         
 		//farmName = farmerNameGen.get(rand.nextInt(farmerNameGen.size()));
 		//waterConsentCost = getRandDoubleRange(10000, 20000);
@@ -185,16 +186,16 @@ public class FileInputValidation extends DatabaseConn {
 			if(cropName == "Pasture"){
 				//cropStage = getRandIntRange(0, 2);
 
-				cropStage = i;
-				if(i > 2){
-					cropStage = 2;
+				cropStage = i +1;
+				if(i > 3){
+					cropStage = getRandIntRange(1,3);
 				}
 			}else {
 				//cropStage = getRandIntRange(0,3);
 
-				cropStage = i;
-				if(i > 3){
-					cropStage =3;
+				cropStage = i + 1;
+				if(i >=4){
+					cropStage = getRandIntRange(1,4);
 				}
 			}
 
@@ -538,22 +539,38 @@ public class FileInputValidation extends DatabaseConn {
             this.grossMarginValue = grossMarginValue;
             this.waterNeed = waterNeed;
         }
-        	public void set(int i, double tempData) {
-			// TODO Auto-generated method stub
-			
-		}
 			public String toString() {
+        		String tempCropstage = "";
+				if(this.cropName == "Pasture"){
+					if(this.cropStage == 3){
+						tempCropstage = "Grazing";
+					}else if(this.cropStage == 2){
+						tempCropstage = "Development";
+					}else{
+						tempCropstage = "Late-season";
+					}
+				}else {
+					if (this.cropStage == 1){
+						tempCropstage = "Initial stage";
+					}else if(this.cropStage == 2){
+						tempCropstage = "Crop development stage";
+					}else if(this.cropStage == 3){
+					}else {
+						tempCropstage = "Late-season stage";
+					}
+				}
+
         		double profitAfterReduction = ((100 - this.profitLostPct)/100) * this.cvValue;
-        		return this.cropName + "  Water requirement for crop:  " + df.format(this.waterReqWithSoil) +  "  water reduction:  " 
+        		return this.cropName + " Crop Stage: " + tempCropstage + "  Water requirement for crop:  " + df.format(this.waterReqWithSoil) +  "  water reduction:  "
 			+ df.format(this.waterReduction) + "  Cost:  " + df.format(this.costPerKg) + "  Profit after reduction: " + df.format(profitAfterReduction) + "  Profit loss (%) :  " + df.format(this.profitLostPct) +
 			"  Gross margin:  " + df.format(this.grossMarginValue) + "  Buying volume need (mm^3/day): " + df.format(this.waterNeed) + "\n";
         	}
         	public String toStringSource(){
         		String tempCropstage = "";
         		if(this.cropName == "Pasture"){
-        			if(this.cropStage == 0){
+        			if(this.cropStage == 3){
 						tempCropstage = "Grazing";
-					}else if(this.cropStage == 1){
+					}else if(this.cropStage == 2){
 						tempCropstage = "Development";
 					}else{
 						tempCropstage = "Late-season";
