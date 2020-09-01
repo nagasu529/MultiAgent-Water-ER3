@@ -551,12 +551,13 @@ public class FileInputValidation extends DatabaseConn {
 					}
 				}else {
 					if (this.cropStage == 1){
-						tempCropstage = "Initial stage";
-					}else if(this.cropStage == 2){
-						tempCropstage = "Crop development stage";
-					}else if(this.cropStage == 3){
-					}else {
 						tempCropstage = "Late-season stage";
+					}else if(this.cropStage == 2){
+						tempCropstage = "Mid-season stage";
+					}else if(this.cropStage == 3){
+						tempCropstage = "Crop development stage";
+					}else {
+						tempCropstage = "Initial stage";
 					}
 				}
 
@@ -577,11 +578,11 @@ public class FileInputValidation extends DatabaseConn {
 					}
 				}else {
 					if (this.cropStage == 1){
-						tempCropstage = "Crop development stage";
+						tempCropstage = "Late-season stage";
 					}else if(this.cropStage == 2){
 						tempCropstage = "Mid-season stage";
 					}else if(this.cropStage == 3){
-						tempCropstage = "Late-season stage";
+						tempCropstage = "Crop development stage";
 					}else {
 					tempCropstage = "Initial stage";
 					}
