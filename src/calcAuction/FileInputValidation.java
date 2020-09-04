@@ -151,11 +151,11 @@ public class FileInputValidation extends DatabaseConn {
 
 		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
 
 		//all pasture type
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed"));
 
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Wheat", "Wheat", "Wheat", "Wheat", "Wheat"));
@@ -169,7 +169,7 @@ public class FileInputValidation extends DatabaseConn {
         List<String> cropStageGenText = Arrays.asList("","Germination", "Development","Flowering", "Ripening");
 
 		//Getting farm name and water consent information.
-        int numberOfElements = 6;
+        int numberOfElements = 5;
         
 		//farmName = farmerNameGen.get(rand.nextInt(farmerNameGen.size()));
 		//waterConsentCost = getRandDoubleRange(10000, 20000);
@@ -199,7 +199,8 @@ public class FileInputValidation extends DatabaseConn {
 				}
 			}
 
-            droughtSensitivity = 1;
+            //droughtSensitivity = 1;
+			droughtSensitivity = getRandIntRange(1,3);
 			/***
 			droughtSensitivity = i +1;
 			if(droughtSensitivity >=3){
@@ -208,7 +209,7 @@ public class FileInputValidation extends DatabaseConn {
 			 ***/
 
             // Adding the number of farm size.
-			plotSize = 200.00;
+			plotSize = 50.0;
 			farmSizeMax = farmSizeMax + plotSize;
 			/***
 			if(numberOfElements == 4){
@@ -220,8 +221,8 @@ public class FileInputValidation extends DatabaseConn {
 			***/
             yieldAmount = app.getYieldAmount(cropName);
             pricePerKg = app.getPricePerKG(cropName);
-            soilType = 1;
-            //soilType = getRandIntRange(1, 3);
+            //soilType = 1;
+            soilType = getRandIntRange(1, 3);
             int irrigationTypeIndex = rand.nextInt(irrigationTypeGen.size());
             String irrigationType = irrigationTypeGen.get(irrigationTypeIndex);
             app.getIrrigationTypeValue(irrigationTypeGen.get(irrigationTypeIndex));
@@ -373,6 +374,12 @@ public class FileInputValidation extends DatabaseConn {
 				Collections.sort(inputArrayList, new SortbyEU());
 				Collections.reverse(inputArrayList);
 				break;
+			case '4':
+				//Special decision: Pasture only which not concern about productivity factor.
+				log = log + "Soil type and soil moisture level are the same priority";
+				cropEU = (cvValue *0) + (dsValue * 0.5) + (stValue * 0.5);
+				Collections.sort(inputArrayList, new SortbyEU());
+				Collections.reverse(inputArrayList);
 			default:
 				log = log = "the first priority is Crop stage";
 				Collections.sort(inputArrayList, new SortbyCropStage());
