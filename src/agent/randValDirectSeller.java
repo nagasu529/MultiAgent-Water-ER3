@@ -76,7 +76,7 @@ public class randValDirectSeller extends Agent {
         //Add a TickerBehaviour that chooses agent status to buyer or seller.
         addBehaviour(new TickerBehaviour(this, 10000){
             protected void onTick() {
-                myGui.displayUI("Name: " + sellerInfo.farmerName + "\n");
+                myGui.displayUI("Name: " + sellerInfo.farmerName + "\n" + getLocalName() + "\n");
                 myGui.displayUI("Status: " + sellerInfo.agentType + "\n");
                 myGui.displayUI("Volumn to sell: " + sellerInfo.sellingVol + "\n");
                 myGui.displayUI("Selling price: " + sellerInfo.sellingPrice + "\n");
@@ -152,7 +152,7 @@ public class randValDirectSeller extends Agent {
         private AID[] bidderAgent;
         private int repliesCnt; // The counter of replies from seller agents
         private MessageTemplate mt; // The template to receive replies
-        int countTick;
+
 
         ArrayList<Agents> bidderReplyList = new ArrayList<>();
         ArrayList<String> output = new ArrayList<String>();
@@ -170,9 +170,7 @@ public class randValDirectSeller extends Agent {
                     template.addServices(sd);
                     try {
                         DFAgentDescription[] result = DFService.search(myAgent, template);
-                        if(result.length > 1){
-                            countTick = countTick+1;
-                        }
+
                         myGui.displayUI("Found acutioneer agents:\n");
                         bidderAgent = new AID[result.length];
                         for (int i = 0; i < result.length; ++i) {
@@ -194,7 +192,7 @@ public class randValDirectSeller extends Agent {
                     cfp.setConversationId("bidding");
                     cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
                     myAgent.send(cfp);
-                    //myGui.displayUI(cfp.toString());
+                    myGui.displayUI(cfp.toString());
                     //System.out.println("cfp message :" + "\n" + cfp);
                     // Prepare the template to get proposals
                     //mt = MessageTemplate.and(MessageTemplate.MatchConversationId("bidding"),MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
@@ -208,17 +206,20 @@ public class randValDirectSeller extends Agent {
                     //mt = MessageTemplate.MatchPerformative(ACLMessage.PROPOSE);
                     ACLMessage reply = myAgent.receive(mt);
                     if (reply != null) {
+                        myGui.displayUI(reply.toString() + "\n");
                         repliesCnt++;
                         // Reply received
                         if (reply.getPerformative() == ACLMessage.PROPOSE) {
-                            //myGui.displayUI("Receive message: \n" + reply + "\n");
+                            repliesCnt++;
+                            myGui.displayUI("Receive message: \n" + reply + "\n");
                             //Count number of bidder that is propose message for water price bidding.
                             // This is an offer
                             String biddedFromAcutioneer = reply.getContent();
                             String[] arrOfStr = biddedFromAcutioneer.split("-");
-                            double tempVolume = Double.parseDouble(arrOfStr[0]);
-                            double tempPrice = Double.parseDouble(arrOfStr[1]);
-                            String tempDBName = arrOfStr[2];
+                            String tempDBName = arrOfStr[0];
+                            double tempVolume = Double.parseDouble(arrOfStr[1]);
+                            double tempPrice = Double.parseDouble(arrOfStr[2]);
+
 
                             //adding data to dictionary, compairing and storing data.
                             if(tempPrice > sellerInfo.sellingPrice && tempVolume == sellerInfo.sellingVol){
@@ -227,7 +228,7 @@ public class randValDirectSeller extends Agent {
                         }
 
                         if (repliesCnt >= bidderAgent.length) {
-                            myGui.displayUI("done" + "\n");
+                            myGui.displayUI("\n" + "done" + "\n");
                             //Collections.sort(bidderReplyList, new SortbyValue());
                             //Collections.reverse(bidderReplyList);
 
@@ -260,8 +261,8 @@ public class randValDirectSeller extends Agent {
                 case 2:
 
                     //output file location.
-                    String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    //String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
+                    String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
                     //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
 
                     //Writing the all bidder result calculation side to file.

@@ -147,14 +147,14 @@ public class randValDirectBidder extends Agent {
 
                             if(sortedListSeller.size() == 0){
                                 System.out.println("Do not have any matching offers");
-                                step = 2;
+                                step = 1;
                             }
 
                             System.out.println("Sorted List Result which from sellers request:>>>>>>>>>>>>>>>>" + "\n" + getLocalName() + "\n");
                             for (int i = 0; i <= sortedListSeller.size() - 1; i++) {
                                 System.out.println(sortedListSeller.get(i) + "\n");
                             }
-                            step = 2;
+                            step = 1;
                         }
 
                     } else {
@@ -169,15 +169,17 @@ public class randValDirectBidder extends Agent {
                     System.out.println("\n" + "Decision making starting >>>>>>>");
 
                     for (int i = 0; i < sellerList.length; i++) {
-                        if (sellerList[i].getLocalName().equals(sortedListSeller.get(0).name)) {
-                            ACLMessage reply = new ACLMessage(ACLMessage.PROPOSE);
-                            reply.setContent(bidderInfo.farmerName + "-" + sortedListSeller.get(0).sellingVol + "-" + sortedListSeller.get(0).sellingPrice);
-                            reply.setConversationId("bidding");
-                            reply.setReplyWith("reply" + System.currentTimeMillis());
-                            reply.addReceiver(sellerList[i]);
-                            myAgent.send(reply);
-                            System.out.println(reply);
-                        }else {
+                        if(sortedListSeller.size() != 0){
+                            if (sellerList[i].getLocalName().equals(sortedListSeller.get(0).name)) {
+                                ACLMessage reply = new ACLMessage(ACLMessage.PROPOSE);
+                                reply.setContent(bidderInfo.farmerName + "-" + sortedListSeller.get(0).sellingVol + "-" + bidderInfo.buyingPrice);
+                                reply.setConversationId("bidding");
+                                reply.setReplyWith("reply" + System.currentTimeMillis());
+                                reply.addReceiver(sellerList[i]);
+                                myAgent.send(reply);
+                                System.out.println(reply);
+                            }
+                        } else {
                             ACLMessage reply = new ACLMessage(ACLMessage.REFUSE);
                             //reply.setContent(getLocalName() + "-" + sortedListSeller.get(j).sellingVol + "-" + 0 + "-" + 0);
                             reply.setConversationId("bidding");
