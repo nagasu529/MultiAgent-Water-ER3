@@ -150,20 +150,19 @@ public class FileInputValidation extends DatabaseConn {
         List<String> farmerNameGen = Arrays.asList("John", "Mark", "Dave", "Morgan", "Steve", "Anna", "Heather", "Nick", "Toby", "Rob");
 
 		//all crops without pasture.
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed", "White clover", "Kale", "Fodder beet"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Kale", "Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
+
 
 		//all pasture type
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "White clover", "Pasture", "Kale", "Fodder beet", "Perennial ryegrass"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Perennial ryegrass"));
 		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed", "Hybrid carrot seed"));
-
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Wheat", "Wheat", "Wheat", "Wheat", "Wheat"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Oil seed", "Oil seed", "Oil seed", "Maize", "Maize", "Maize"));
 
 		//all crops and pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Maize", "Peanut", "Oil seed", "Pasture", "Pasture"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("White clover", "Maize", "Barley", "Pasture", "Perennial ryegrass"));
+
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
         List<String> cropStageGenText = Arrays.asList("","Germination", "Development","Flowering", "Ripening");
@@ -199,8 +198,8 @@ public class FileInputValidation extends DatabaseConn {
 				}
 			}
 
-            //droughtSensitivity = 1;
-			droughtSensitivity = getRandIntRange(1,3);
+            droughtSensitivity = 3;
+			//droughtSensitivity = getRandIntRange(1,3);
 			/***
 			droughtSensitivity = i +1;
 			if(droughtSensitivity >=3){
@@ -221,13 +220,18 @@ public class FileInputValidation extends DatabaseConn {
 			***/
             yieldAmount = app.getYieldAmount(cropName);
             pricePerKg = app.getPricePerKG(cropName);
-            //soilType = 1;
-            soilType = getRandIntRange(1, 3);
+            soilType = 1;
+            //soilType = getRandIntRange(1, 3);
+            /***
             int irrigationTypeIndex = rand.nextInt(irrigationTypeGen.size());
             String irrigationType = irrigationTypeGen.get(irrigationTypeIndex);
             app.getIrrigationTypeValue(irrigationTypeGen.get(irrigationTypeIndex));
             irrigationTypeValue = app.irrigationRate;
-            app.KcStageValue(cropName, cropStageGenText.get(cropStage), irrigationTypeGen.get(irrigationTypeIndex),soilType, droughtSensitivity);
+			app.KcStageValue(cropName, cropStageGenText.get(cropStage), irrigationTypeGen.get(irrigationTypeIndex),soilType, droughtSensitivity);
+			 ***/
+            app.getIrrigationTypeValue(irrigationTypeGen.get(0));
+            irrigationTypeValue = app.irrigationRate;
+			app.KcStageValue(cropName, cropStageGenText.get(cropStage), irrigationTypeGen.get(0),soilType, droughtSensitivity);
 			kcStageValue = app.KcStageValue;
 			//app.KcCalculation(cropName,cropStageGenText.get(cropStage - 1));
 			//KcValue = app.KcValue;
@@ -243,7 +247,8 @@ public class FileInputValidation extends DatabaseConn {
 			//waterReq = calcWaterReqPerDay(KcValue, valueET, plotSize);
 			waterReq = calcWaterReqPerDay(kcStageValue, valueET, plotSize);
             literPerSecHec = calcLitePerSecHecDay(waterReq, plotSize);
-            soilWaterContainValue = calcSoilMoistureValue(15, 30);
+            //soilWaterContainValue = calcSoilMoistureValue(15, 30);
+			soilWaterContainValue = 0.3;
             waterReqWithSoil = calcWaterReqWithSoil(waterReq, soilWaterContainValue);
             
 
@@ -253,7 +258,7 @@ public class FileInputValidation extends DatabaseConn {
 
 			 System.out.println("No.: " + order + "  Crop Name: " + cropName + "  water requirement: " + df.format(waterReq) + "  Value ET: " + df.format(valueET) + "  Plot size:  " + df.format(plotSize) + "  Yield amount: " + df.format(yieldAmount) +
 			 "  Price per kg. : " + df.format(pricePerKg) + "  Crop stage: " + df.format(cropStage) + "  kc Stage Value: " + df.format(kcStageValue) + "  water Req with Soil: " + df.format(waterReqWithSoil) + " soil water contain: " + df.format(soilWaterContainValue) +
-			 " Profit value: "  + df.format(cvValue) + "  Drought sensitivity: " + df.format(droughtSensitivity) + "\n" + "Ds value: " + df.format(dsValue));
+			 " Profit value: "  + df.format(cvValue) + "  Drought sensitivity: " + df.format(droughtSensitivity) + "\n" + "Ds value: " + df.format(dsValue) + "  Irrigation type: " + irrigationTypeGen.get(0));
 			/***
 			outputInArrayList.add(new cropType(order, cropName, cropStage, droughtSensitivity, plotSize, yieldAmount,
 					pricePerKg, soilType, irrigationTypeValue, KcValue, literPerSecHec, waterReq, soilWaterContainValue,

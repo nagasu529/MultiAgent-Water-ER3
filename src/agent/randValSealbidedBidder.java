@@ -35,10 +35,10 @@ public class randValSealbidedBidder extends Agent {
         //Initialize process.
 
         //Randomize data input from database
-        //app.selectBiddersRandom();
+        app.selectBiddersRandom();
 
         //Initialized the fixed data input.
-        app.selectBidders(getLocalName());
+        //app.selectBidders(getLocalName());
 
         bidderInfo = new agentInfo(getAID().getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalCost, app.TotalFarmGrossMargin,
                 app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, "bidder",(0.1 * app.ConsentPrice)/100, (app.WaterReq - app.WaterReqAfterReduction));

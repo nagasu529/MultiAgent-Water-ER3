@@ -74,7 +74,7 @@ public class randValDirectBidder extends Agent {
         //Add the behavior serving purchase orders from water provider agent.
         addBehaviour(new PurchaseOrdersServer());
 
-        //addBehaviour(new RejectProposalProcess());
+        addBehaviour(new RejectProposalProcess());
 
         //addBehaviour(new RejectandReset());
     }
@@ -169,19 +169,17 @@ public class randValDirectBidder extends Agent {
                     System.out.println("\n" + "Decision making starting >>>>>>>");
 
                     for (int i = 0; i < sellerList.length; i++) {
-                        if(sortedListSeller.size() != 0){
-                            if (sellerList[i].getLocalName().equals(sortedListSeller.get(0).name)) {
-                                ACLMessage reply = new ACLMessage(ACLMessage.PROPOSE);
-                                reply.setContent(bidderInfo.farmerName + "-" + sortedListSeller.get(0).sellingVol + "-" + bidderInfo.buyingPrice);
-                                reply.setConversationId("bidding");
-                                reply.setReplyWith("reply" + System.currentTimeMillis());
-                                reply.addReceiver(sellerList[i]);
-                                myAgent.send(reply);
-                                System.out.println(reply);
-                            }
-                        } else {
+                        if(sortedListSeller.size() == 0){
                             ACLMessage reply = new ACLMessage(ACLMessage.REFUSE);
                             //reply.setContent(getLocalName() + "-" + sortedListSeller.get(j).sellingVol + "-" + 0 + "-" + 0);
+                            reply.setConversationId("bidding");
+                            reply.setReplyWith("reply" + System.currentTimeMillis());
+                            reply.addReceiver(sellerList[i]);
+                            myAgent.send(reply);
+                            System.out.println(reply);
+                        } else {
+                            ACLMessage reply = new ACLMessage(ACLMessage.PROPOSE);
+                            reply.setContent(bidderInfo.dbName+ "-" + sortedListSeller.get(0).sellingVol + "-" + bidderInfo.buyingPrice);
                             reply.setConversationId("bidding");
                             reply.setReplyWith("reply" + System.currentTimeMillis());
                             reply.addReceiver(sellerList[i]);
@@ -207,7 +205,6 @@ public class randValDirectBidder extends Agent {
             MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
             ACLMessage msg = myAgent.receive(mt);
             if (msg != null) {
-
                 ACLMessage reply = msg.createReply();
                 reply.setPerformative(ACLMessage.INFORM);
                 reply.setContent("");
@@ -234,7 +231,10 @@ public class randValDirectBidder extends Agent {
             MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL);
             ACLMessage msg = myAgent.receive(mt);
             if (msg != null) {
-                addBehaviour(new OfferRequestsServer());
+                //addBehaviour(new OfferRequestsServer());
+                System.out.println(getAID().getName() + " terminating.");
+                myAgent.doSuspend();
+                takeDown();
             } else {
                 block();
             }
@@ -266,15 +266,15 @@ public class randValDirectBidder extends Agent {
                 mornitorReply.addReceiver(mornitorAgent[i]);
             }
 
-            mornitorReply.setContent(bidderInfo.farmerName + "-" + bidderInfo.buyingVol + "-" + bidderInfo.buyingPrice + "-"
+            mornitorReply.setContent(bidderInfo.dbName + "-" + bidderInfo.buyingVol + "-" + bidderInfo.buyingPrice + "-"
                     + bidderInfo.totalProfitValue + "-" + bidderInfo.profitAfterReduction);
             myAgent.send(mornitorReply);
         }
     }
 
     public class agentInfo {
-        String agentName;
-        String farmerName;
+        String localName;
+        String dbName;
         double farmSize;
         Double consentPrice;
         Double waterReq;
@@ -287,10 +287,10 @@ public class randValDirectBidder extends Agent {
         Double buyingPrice;
         Double buyingVol;
 
-        agentInfo(String agentName, String farmerName, double farmSize, double consentPrice, double waterReq, double totalProfitValue, double totalGrossMargin, double pctReduction,
+        agentInfo(String localName, String dbName, double farmSize, double consentPrice, double waterReq, double totalProfitValue, double totalGrossMargin, double pctReduction,
                   double waterReqAfterReduction, double profitAfterReduction, String agentType, double buyingPrice, double buyingVol) {
-            this.agentName = agentName;
-            this.farmerName = farmerName;
+            this.localName = localName;
+            this.dbName = dbName;
             this.farmSize = farmSize;
             this.consentPrice = consentPrice;
             this.waterReq = waterReq;
@@ -305,7 +305,7 @@ public class randValDirectBidder extends Agent {
         }
 
         public String toString() {
-            return "Bidder Name: " + this.agentName + " " + "DB order: " + this.farmerName + "  " + "Buying Volume: " + df.format(this.buyingVol) + " " + "Price: " + this.buyingPrice + " Profit loss: " + (this.totalProfitValue - this.profitAfterReduction);
+            return "Bidder Name: " + this.localName + " " + "DB order: " + this.dbName + "  " + "Buying Volume: " + df.format(this.buyingVol) + " " + "Price: " + this.buyingPrice + " Profit loss: " + (this.totalProfitValue - this.profitAfterReduction);
         }
     }
 

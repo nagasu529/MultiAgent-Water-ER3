@@ -41,10 +41,10 @@ public class randValSealbidedSeller extends Agent {
     protected void setup(){
 
         //Initialized the data input randomly.
-        //app.selectSellerRandom();
+        app.selectSellerRandom();
 
         //Initialized the fixed data input.
-        app.selectSeller(getLocalName());
+        //app.selectSeller(getLocalName());
 
         sellerInfo = new agentInfo(getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalCost,
                 app.grossMaginValue, app.PctReduction, app.WaterReqAfterReduction, app.ProfitAfterReduction, "Seller", app.SellingVol, app.SellingPrice);

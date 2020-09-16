@@ -71,12 +71,12 @@ public class randValDirectSeller extends Agent {
             fe.printStackTrace();
         }
 
-        System.out.println(sellerInfo.farmerName + "  is ready" + "\n" + "Stage is  " + sellerInfo.agentType + "\n");
+        System.out.println(sellerInfo.localName + "  is ready" + "\n" + "Stage is  " + sellerInfo.agentType + "\n");
 
         //Add a TickerBehaviour that chooses agent status to buyer or seller.
         addBehaviour(new TickerBehaviour(this, 10000){
             protected void onTick() {
-                myGui.displayUI("Name: " + sellerInfo.farmerName + "\n" + getLocalName() + "\n");
+                myGui.displayUI("Name: " + sellerInfo.localName + "\n" + sellerInfo.dbName + "\n");
                 myGui.displayUI("Status: " + sellerInfo.agentType + "\n");
                 myGui.displayUI("Volumn to sell: " + sellerInfo.sellingVol + "\n");
                 myGui.displayUI("Selling price: " + sellerInfo.sellingPrice + "\n");
@@ -184,7 +184,7 @@ public class randValDirectSeller extends Agent {
                     // Send the cfp to all sellers (Sending water volumn required to all bidding agent)
                     ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
                     for (int i = 0; i < bidderAgent.length; ++i) {
-                        if (bidderAgent[i].getName().equals(sellerInfo.farmerName)== false) {
+                        if (bidderAgent[i].getName().equals(sellerInfo.localName)== false) {
                             cfp.addReceiver(bidderAgent[i]);
                         }
                     }
@@ -210,7 +210,7 @@ public class randValDirectSeller extends Agent {
                         repliesCnt++;
                         // Reply received
                         if (reply.getPerformative() == ACLMessage.PROPOSE) {
-                            repliesCnt++;
+                            //repliesCnt++;
                             myGui.displayUI("Receive message: \n" + reply + "\n");
                             //Count number of bidder that is propose message for water price bidding.
                             // This is an offer
@@ -234,7 +234,7 @@ public class randValDirectSeller extends Agent {
 
                             //Writting output.
 
-                            String temmpString = getLocalName() + "," + sellerInfo.farmerName + "," + sellerInfo.sellingVol + "," + sellerInfo.sellingPrice + ",";
+                            String temmpString = sellerInfo.localName + "," + sellerInfo.dbName + "," + sellerInfo.sellingVol + "," + sellerInfo.sellingPrice + ",";
                             Agents tempOutputArray = new Agents("none", "none",0.0, 0.0);
                             if(bidderReplyList.size() != 0) {
                                 bidderReplyList.get(0).toString();
@@ -261,8 +261,8 @@ public class randValDirectSeller extends Agent {
                 case 2:
 
                     //output file location.
-                    //String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
+                    //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
                     //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
 
                     //Writing the all bidder result calculation side to file.
@@ -394,8 +394,8 @@ public class randValDirectSeller extends Agent {
 
     // function to sort hashmap by values
     public class agentInfo {
-        String agentName;
-        String farmerName;
+        String localName;
+        String dbName;
         Double farmSize;
         Double consentPrice;
         Double waterReq;
@@ -409,10 +409,10 @@ public class randValDirectSeller extends Agent {
         Double sellingVol;
         Double sellingPrice;
 
-        agentInfo(String agentName, String farmerName, double farmSize, double consentPrice, double waterReq, double totalProfitValue, double totalCost, double totalGrossMargin, double pctReduction,
+        agentInfo(String localName, String dbName, double farmSize, double consentPrice, double waterReq, double totalProfitValue, double totalCost, double totalGrossMargin, double pctReduction,
                   double waterReqAfterReduction, double profitAfterReduction, String agentType, double sellingVol, double sellingPrice) {
-            this.agentName = agentName;
-            this.farmerName = farmerName;
+            this.localName = localName;
+            this.dbName = dbName;
             this.farmSize = farmSize;
             this.consentPrice = consentPrice;
             this.waterReq = waterReq;
@@ -428,7 +428,7 @@ public class randValDirectSeller extends Agent {
         }
 
         public String toString() {
-            return "Seller Name: " + this.agentName + " " + "DB order: " + this.farmerName + "  " + "Buying Volume: " + df.format(this.sellingVol) + " " + "Price: " + this.sellingPrice + " Profit loss: " + (this.totalProfitValue - this.profitAfterReduction);
+            return "Seller Name: " + this.localName + " " + "DB order: " + this.dbName + "  " + "Buying Volume: " + df.format(this.sellingVol) + " " + "Price: " + this.sellingPrice + " Profit loss: " + (this.totalProfitValue - this.profitAfterReduction);
         }
     }
 
@@ -450,8 +450,8 @@ public class randValDirectSeller extends Agent {
 
         //Constructor
         public Agents(String name, String dbName, double totalVolume, double price){
-            this.dbName = name;
-            this.name = dbName;
+            this.name = name;
+            this.dbName = dbName;
             this.totalVolume = totalVolume;
             this.price = price;
         }

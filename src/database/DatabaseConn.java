@@ -591,7 +591,11 @@ public class DatabaseConn {
 
         //result of Kc value which include irrigation system and soil type data
         KcStageValue = KcCurrent + temp;
-        System.out.println("Kr is " + temp);
+        System.out.println("Kc max " + KcMax);
+        System.out.println("Kc min " + KcMin);
+        System.out.println("Fc is " + Fc);
+        System.out.println("Kr is " + KrValue);
+        System.out.println("Ke is " + Ke);
         System.out.println("Kc based current is" + KcCurrent);
         System.out.println("Kc Stage value is " + KcStageValue);
 

@@ -177,12 +177,12 @@ public class MonitorNewAgent extends Agent {
                             myGui.displayUI("\n" + "Max bidder: " + maxBiderAgents + "     " + "Current biider no.: " +  currentNumBidderAgent + "\n");
                             myGui.displayUI("\n" + "Total bidder numbers is " + bidderMornitor.size() + "\n");
                             myGui.displayUI("Total water request from the groups of buyers:  " + df.format(maxBuyingVol) + "  " + df.format(((maxBuyingVol*100)/(maxBuyingVol))) + "%" + "\n");
-                            myGui.displayUI("Total profit loss from group of buyers:  " + df.format((100*maxProfitLoss)/(maxProfitLoss)) + "\n");
+                            myGui.displayUI("Total profit loss reduction from group of buyers:  " + df.format(100 - (100 * totalProfitAfter)/(totalProfitBefore)) + "\n");
                             
                             //Writing the all bidder result calculation side to file.
                             //output file location.
-                            //String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 		//Macbook
-                            String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 					//Home PC
+                            String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 		//Macbook
+                            //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv"; 					//Home PC
                             //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/bidder.csv";  	//Office
                             
                             Collections.sort(bidderNameDB);
