@@ -1,5 +1,6 @@
 package agent;
 
+import calcAuction.FileInputValidation;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -31,9 +32,8 @@ public class randValSealVarieSeller extends Agent {
 
     //General parameters information
     DecimalFormat df = new DecimalFormat("#.##");
-    FileInput randValue = new FileInput();
+    FileInputValidation randValue = new FileInputValidation();
     String log = "";
-    int FreqCnt = 2;
     int informCnt = 0;
     int cfpCnt;
 
@@ -55,6 +55,19 @@ public class randValSealVarieSeller extends Agent {
         sellerInfo = new agentInfo(getLocalName(), app.Name, app.FarmSize, app.ConsentPrice, app.WaterReq, app.TotalProfitValue, app.TotalCost, app.TotalFarmGrossMargin, app.PctReduction,
                 app.WaterReqAfterReduction, app.ProfitAfterReduction, app.SellingVol, app.SellingPrice);
 
+        //Spliting the selling volume to two groups based on total selling volume.
+        if(sellerInfo.sellingVol <= 500){
+            sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,200,"none","none",0.0,0.0));
+            sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,sellerInfo.sellingVol - 200,"none","none",0.0,0.0));
+        }else if(sellerInfo.sellingVol >500 && sellerInfo.sellingVol <= 1000){
+            sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,350, "none","none",0.0,0.0));
+            sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,sellerInfo.sellingVol - 350,"none", "none",0.0,0.0));
+        }else {
+            sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,500, "none", "none", 0.0, 0.0));
+            sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName, sellerInfo.sellingVol - 500,"none", "none", 0.0,0.0));
+        }
+
+        /***
         //Selling volume spited by conditions (each group is not over 500 mm^3).
         //adding the splitting volume to catalog.
 
@@ -72,6 +85,7 @@ public class randValSealVarieSeller extends Agent {
             }
 
         }
+         ***/
 
         myGui = new randValSealVarieSellerGui(this);
         myGui.show();
@@ -96,6 +110,8 @@ public class randValSealVarieSeller extends Agent {
             protected void onTick() {
                 myGui.displayUI("Name: " + sellerInfo.farmerName + "\n");
                 myGui.displayUI("Volumn to sell: " + sellerInfo.sellingVol + "\n");
+                myGui.displayUI("First Volume: " + sellingCatalog.get(0).toString() + "\n");
+                myGui.displayUI("Last Volume: " + sellingCatalog.get(1).toString() + "\n");
                 myGui.displayUI("Selling price: " + sellerInfo.sellingPrice + "\n");
                 myGui.displayUI("\n");
                 for (int i = 0; i <= sellingCatalog.size() - 1; i++) {
@@ -160,7 +176,7 @@ public class randValSealVarieSeller extends Agent {
                         }
                     }
                     //cfp.setContent(String.valueOf(Double.toString(sellerInfo.sellingVolumn) + "-" + Double.toString((sellerInfo.sellingPrice))));
-                    cfp.setContent((sellingCatalog.size() - 1) + "-" + sellingCatalog.get(0).volume);
+                    cfp.setContent((sellingCatalog.get(0).sellerDBName + "-" + sellingCatalog.get(0).volume) + "-" + sellingCatalog.get(1).volume);
                     cfp.setConversationId("bidding");
                     cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
                     cfpCnt++;
@@ -211,6 +227,11 @@ public class randValSealVarieSeller extends Agent {
                             refuseCnt++;
                         }
 
+                        myGui.displayUI("\n" + "Verified result : >>>>>>>>>>>>>>>>>>> \n");
+                        myGui.displayUI("Reply msg: " + replyCnt + "  " + "PROPOSE msg : " + proposeCnt + "   " + "REFUSE msg: " + refuseCnt + "\n");
+                        //myGui.displayUI("\n" + "bidder reply size:  " + (bidderReplyList.size()) + "\n" + "bidder reply list:" + "\n");
+                        myGui.displayUI("Starting to process: \n");
+
                         if ((replyCnt >= sellingCatalog.size() * bidderAgent.length)) {
                             Collections.sort(bidderReplyList, new SortbyValue());
                             Collections.reverse(bidderReplyList);
@@ -218,37 +239,54 @@ public class randValSealVarieSeller extends Agent {
                             myGui.displayUI("\n" + "Verified result : >>>>>>>>>>>>>>>>>>> \n");
                             myGui.displayUI("Reply msg: " + replyCnt + "  " + "PROPOSE msg : " + proposeCnt + "   " + "REFUSE msg: " + refuseCnt + "\n");
                             //myGui.displayUI("\n" + "bidder reply size:  " + (bidderReplyList.size()) + "\n" + "bidder reply list:" + "\n");
-                            for(int i = 0; i <= bidderReplyList.size() -1; i++){
+                            for (int i = 0; i <= bidderReplyList.size() - 1; i++) {
                                 myGui.displayUI("sssssss  " + bidderReplyList.get(i).toString() + "\n");
                             }
-
                             myGui.displayUI("\n");
                             step = 2;
                         }
-
                     }else {
                         block();
                     }
 
                     break;
+                        /***
+                        //calculated result
+                        while (bidderReplyList.size() > 0) {
+                            if(bidderReplyList.get(0).buyingPrice > sellingCatalog.get(0).winnerPrice){
+                                sellingCatalog.get(0).winnerPrice = bidderReplyList.get(0).buyingPrice;
+                                sellingCatalog.get(0).winnerName = bidderReplyList.get(0).name;
+                                sellingCatalog.get(0).winnerDBName = bidderReplyList.get(0).nameDB;
+                                bidderReplyList.remove(0);
+                            }else if(bidderReplyList.get(0).buyingPrice > sellingCatalog.get(1).winnerPrice){
+                                sellingCatalog.get(0).winnerPrice = bidderReplyList.get(1).buyingPrice;
+                                sellingCatalog.get(0).winnerName = bidderReplyList.get(0).name;
+                                sellingCatalog.get(0).winnerDBName = bidderReplyList.get(0).nameDB;
+                                bidderReplyList.remove(0);
+                            }
+                        }
+                         ***/
                 case 2:
                     /*
                      * Calculating and adding accepted water volume for bidder based on highest price.
                      * Sending message to bidders with two types (Accept proposal or Refuse) based on
                      * accepted water volume to sell.
                      */
+
                     //Sorted propose message and matching to reply INFORM Message.
 
-                    while (bidderReplyList.size() > 0) {
-                        for(int i = 0; i <= sellingCatalog.size() -1; i++) {
-                            if(bidderReplyList.get(0).catalogKey == sellingCatalog.get(i).dictOrder && bidderReplyList.get(0).buyingPrice > sellingCatalog.get(i).winnerPrice) {
-                                sellingCatalog.get(i).winnerName = bidderReplyList.get(0).name;
-                                sellingCatalog.get(i).winnerDBName = bidderReplyList.get(0).nameDB;
-                                sellingCatalog.get(i).winnerPrice = bidderReplyList.get(0).buyingPrice;
-                                sellingCatalog.get(i).winnerVol = sellingCatalog.get(i).volume;
-                            }
+                    while (bidderReplyList.size() > 0){
+                        if((bidderReplyList.get(0).buyingVol == sellingCatalog.get(0).volume) && (bidderReplyList.get(0).buyingPrice > sellingCatalog.get(0).winnerPrice)){
+                            sellingCatalog.get(0).winnerPrice = bidderReplyList.get(0).buyingPrice;
+                            sellingCatalog.get(0).winnerName = bidderReplyList.get(0).name;
+                            sellingCatalog.get(0).winnerDBName = bidderReplyList.get(0).nameDB;
+                            bidderReplyList.remove(0);
+                        }else if((bidderReplyList.get(0).buyingVol == sellingCatalog.get(1).volume) && (bidderReplyList.get(0).buyingPrice > sellingCatalog.get(1).winnerPrice)){
+                            sellingCatalog.get(0).winnerPrice = bidderReplyList.get(1).buyingPrice;
+                            sellingCatalog.get(0).winnerName = bidderReplyList.get(1).name;
+                            sellingCatalog.get(0).winnerDBName = bidderReplyList.get(1).nameDB;
+                            bidderReplyList.remove(0);
                         }
-                        bidderReplyList.remove(0);
                     }
 
                     //Verified result.
@@ -265,7 +303,7 @@ public class randValSealVarieSeller extends Agent {
                         }else {
                             logAccept = logAccept + sellingCatalog.get(i).toString() + "\n";
                         }
-                        tempOutput = tempOutput + (sellingCatalog.get(i).dictOrder + "," + sellingCatalog.get(i).winnerName +"," + sellingCatalog.get(i).winnerDBName +
+                        tempOutput = tempOutput + (i + "," + sellingCatalog.get(i).winnerName +"," + sellingCatalog.get(i).winnerDBName +
                                 "," + sellingCatalog.get(i).winnerVol +","+ sellingCatalog.get(i).winnerPrice);
                         output.add(tempOutput);
                     }
@@ -275,8 +313,8 @@ public class randValSealVarieSeller extends Agent {
                     myGui.displayUI(output.toString());
 
                     //output file location.
-                    String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    //String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
+                    String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
                     //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
 
                     //Writing the all bidder result calculation side to file.
@@ -299,8 +337,7 @@ public class randValSealVarieSeller extends Agent {
                         for (int j = 0; j <= sellingCatalog.size() - 1; j++) {
                             if (bidderAgent[i].getLocalName().equals(sellingCatalog.get(j).winnerName)) {
                                 ACLMessage replyToBidder = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
-                                replyToBidder.setContent(getLocalName() + "-" + sellingCatalog.get(j).dictOrder + "-" +
-                                        sellingCatalog.get(j).winnerVol + "-" + sellingCatalog.get(j).winnerPrice);
+                                replyToBidder.setContent(getLocalName()  + "-" + sellingCatalog.get(j).winnerVol + "-" + sellingCatalog.get(j).winnerPrice);
                                 replyToBidder.setConversationId("bidding");
                                 replyToBidder.setReplyWith("reply" + System.currentTimeMillis());
                                 replyToBidder.addReceiver(bidderAgent[i]);
@@ -309,8 +346,7 @@ public class randValSealVarieSeller extends Agent {
                                 //myGui.displayUI(replyToBidder.toString() + "\n");
                             }else {
                                 ACLMessage replyToBidder = new ACLMessage(ACLMessage.REJECT_PROPOSAL);
-                                replyToBidder.setContent(getLocalName() + "-" + sellingCatalog.get(j).dictOrder + "-" +
-                                        sellingCatalog.get(j).winnerVol + "-" + sellingCatalog.get(j).winnerPrice);
+                                replyToBidder.setContent(getLocalName() + "-" + sellingCatalog.get(j).winnerVol + "-" + sellingCatalog.get(j).winnerPrice);
                                 replyToBidder.setConversationId("bidding");
                                 replyToBidder.setReplyWith("reply" + System.currentTimeMillis());
                                 replyToBidder.addReceiver(bidderAgent[i]);
@@ -374,14 +410,16 @@ public class randValSealVarieSeller extends Agent {
     }
 
     public class catalogInfo{
-        int dictOrder;
+        String sellerName;
+        String sellerDBName;
         double volume;
         String winnerName;
         String winnerDBName;
         double winnerVol;
         double winnerPrice;
-        catalogInfo(int dictOrder, double volume, String winnerName, String winnerDBName, double winnerVol, double winnerPrice){
-            this.dictOrder = dictOrder;
+        catalogInfo(String sellerName, String sellerDBName, double volume, String winnerName, String winnerDBName, double winnerVol, double winnerPrice){
+            this.sellerDBName = sellerDBName;
+            this.sellerName = sellerName;
             this.volume = volume;
             this.winnerName = winnerName;
             this.winnerDBName = winnerDBName;
@@ -389,7 +427,7 @@ public class randValSealVarieSeller extends Agent {
             this.winnerPrice = winnerPrice;
         }
         public String toString() {
-            return "Dict no.: " + this.dictOrder + "  Vol" + this.volume + "   Winner: " + this.winnerName + "  DB Name: " + this.winnerDBName +
+            return "Seller name: " + this.sellerName + "  DB name: " + this.sellerDBName + "  Vol" + this.volume + "   Winner: " + this.winnerName + "  DB Name: " + this.winnerDBName +
                     "  Vol: " + this.winnerVol + "  Price: " + this.winnerPrice + "\n";
         }
     }

@@ -152,16 +152,18 @@ public class FileInputValidation extends DatabaseConn {
 		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed", "White clover", "Kale", "Fodder beet"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Kale", "Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Peanut", "Wheat", "Maize", "Wheat", "Peanut", "Peanut"));
 
 
 		//all pasture type
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Perennial ryegrass"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pasture", "Pasture", "Pasture", "Pasture", "Pasture", "Pasture"));
 
 		//all crops and pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Maize", "Peanut", "Oil seed", "Pasture", "Pasture"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("White clover", "Maize", "Barley", "Pasture", "Perennial ryegrass"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Oil seed", "Pasture", "Pasture"));
 
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
@@ -198,8 +200,8 @@ public class FileInputValidation extends DatabaseConn {
 				}
 			}
 
-            droughtSensitivity = 3;
-			//droughtSensitivity = getRandIntRange(1,3);
+            //droughtSensitivity = 3;
+			droughtSensitivity = getRandIntRange(1,3);
 			/***
 			droughtSensitivity = i +1;
 			if(droughtSensitivity >=3){
@@ -220,8 +222,8 @@ public class FileInputValidation extends DatabaseConn {
 			***/
             yieldAmount = app.getYieldAmount(cropName);
             pricePerKg = app.getPricePerKG(cropName);
-            soilType = 1;
-            //soilType = getRandIntRange(1, 3);
+            //soilType = 1;
+            soilType = getRandIntRange(1, 3);
             /***
             int irrigationTypeIndex = rand.nextInt(irrigationTypeGen.size());
             String irrigationType = irrigationTypeGen.get(irrigationTypeIndex);

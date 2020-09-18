@@ -23,9 +23,9 @@ public class randValSealVarieBidder extends Agent {
     FileInput randValue = new FileInput();
     DatabaseConn app = new DatabaseConn();
     DecimalFormat df = new DecimalFormat("#.##");
-    ArrayList<Agents> sortedListSeller = new ArrayList<Agents>();
-    ArrayList<Agents> proposeSortedList = new ArrayList<Agents>();
-    ArrayList<catalogInfo> bidingCatalog = new ArrayList<catalogInfo>();
+    ArrayList<catalogInfo> sortedListSeller = new ArrayList<catalogInfo>();
+    ArrayList<catalogInfo> proposeSortedList = new ArrayList<catalogInfo>();
+    //ArrayList<catalogInfo> bidingCatalog = new ArrayList<catalogInfo>();
 
 
 
@@ -53,6 +53,7 @@ public class randValSealVarieBidder extends Agent {
 
         System.out.println(getAID().getLocalName() + "  is ready");
 
+        /***
         //Selling volume spited by conditions (each group is not over 500 mm^3).
         //adding the splitting volume to catalog.
         double tempNumBuyingCatalogItem = bidderInfo.buyingVol/500;
@@ -67,6 +68,7 @@ public class randValSealVarieBidder extends Agent {
                 fiveHundredVolFreq--;
             }
         }
+         ***/
 
         //Start Agent
         // Register the service in the yellow pages
@@ -149,23 +151,21 @@ public class randValSealVarieBidder extends Agent {
                             //Price Per MM. and the number of volume to sell from Seller.
                             String currentOffer = msg.getContent();
                             String[] arrOfstr = currentOffer.split("-");
-                            int tempNumofFiveHundredVol = Integer.parseInt(arrOfstr[0]);
-                            double tempVarieValue = Double.parseDouble(arrOfstr[1]);
-                            System.out.println( getLocalName() + "   " + msg.getSender().getLocalName() + " Offer Vol:  " + ((tempNumofFiveHundredVol * 500) + tempVarieValue));
 
-                            if(tempNumofFiveHundredVol == 0){
-                                sortedListSeller.add(new Agents(msg.getSender().getLocalName(), 0, tempVarieValue));
-                            }else{
-                                while(tempNumofFiveHundredVol > 0){
-                                    sortedListSeller.add(new Agents(msg.getSender().getLocalName(), tempNumofFiveHundredVol, 500));
-                                    tempNumofFiveHundredVol--;
-                                }
-                            }
+                            //Print the received message
+                            System.out.println(msg + "\n");
+                            String sellerName = msg.getSender().getLocalName();
+                            String sellerDBname = arrOfstr[0];
+                            double tempSellerFirstVolume = Double.parseDouble(arrOfstr[1]);
+                            double tempSellerSecondVolume = Double.parseDouble(arrOfstr[2]);
+                            sortedListSeller.add(new catalogInfo(sellerName, sellerDBname,tempSellerFirstVolume));
+                            sortedListSeller.add(new catalogInfo(sellerName,sellerDBname,tempSellerSecondVolume));
                         }
 
                         if (replyCnt == sellerList.length) {
                             System.out.println(getLocalName() + "  receive all CFP ");
                             Collections.sort(sortedListSeller, new SortbyVolume());
+                            Collections.reverse(sortedListSeller);
 
                             System.out.println("Sorted List Result which from sellers request:>>>>>>>>>>>>>>>>" + "\n" + getLocalName() + "\n");
                             for (int i = 0; i <= sortedListSeller.size() - 1; i++) {
@@ -174,7 +174,24 @@ public class randValSealVarieBidder extends Agent {
 
                             //decision for PROPOSE message sending.
                             System.out.println("\n" + "Decision making starting>>>>>>>");
+                            double tempBuyingVol = bidderInfo.buyingVol;
+                            for(int i = 0; i < sortedListSeller.size() ;i++){
+                                while(tempBuyingVol > 0){
+                                    proposeSortedList.add(sortedListSeller.get(i));
+                                    tempBuyingVol = tempBuyingVol - sortedListSeller.get(i).volume;
+                                }
+                            }
 
+                            //Verified result.
+                            System.out.println("Verified result>>>>>>>>>>>>>>>>>>>>>>>       " + getLocalName() + "\n");
+                            for(int i = 0; i < proposeSortedList.size(); i++){
+                                System.out.println(proposeSortedList.get(i).toString());
+                            }
+
+                            System.out.println("\n");
+                            step = 1;
+
+                            /***
                             for(int i = 0; i <= bidingCatalog.size() - 1; i++) {
                                 catalogInfo tempBiddingCatalog = bidingCatalog.get(i);
                                 for (int j = 0; j <= sortedListSeller.size() - 1; j++) {
@@ -202,8 +219,9 @@ public class randValSealVarieBidder extends Agent {
                                 System.out.println("Result from " + getLocalName() + " Winner is " + bidingCatalog.get(i).winnerName + "  " + bidingCatalog.get(i).dictOrder +
                                         "  " + bidingCatalog.get(i).winnerName + "  " + bidingCatalog.get(i).winnerVol);
                             }
+                             step = 1;
+                             ***/
 
-                            step = 1;
                         }
 
                     } else {
@@ -214,11 +232,11 @@ public class randValSealVarieBidder extends Agent {
                 case 1:
                     //Sending PROPOSE message to Seller (only the best option for volume requirement.
 
-                    for (int i = 0; i < sellerList.length; i++) {
-                        for (int j = 0; j <= bidingCatalog.size() - 1; j++) {
-                            if (sellerList[i].getLocalName().equals(bidingCatalog.get(j).winnerName)) {
+                    for (int i = 0; i < sortedListSeller.size(); i++) {
+                        for (int j = 0; j <= proposeSortedList.size() - 1; j++) {
+                            if (sortedListSeller.get(i).sellerName.equals(proposeSortedList.get(j).sellerName)) {
                                 ACLMessage reply = new ACLMessage(ACLMessage.PROPOSE);
-                                reply.setContent(bidderInfo.farmerName + "-" + bidingCatalog.get(j).dictOrder + "-" + bidingCatalog.get(j).winnerVol + "-" + bidderInfo.buyingPrice);
+                                reply.setContent(bidderInfo.farmerName + "-" + proposeSortedList.get(j).volume + "-" + bidderInfo.buyingPrice);
                                 reply.setConversationId("bidding");
                                 reply.setReplyWith("reply" + System.currentTimeMillis());
                                 reply.addReceiver(sellerList[i]);
@@ -226,7 +244,7 @@ public class randValSealVarieBidder extends Agent {
                                 System.out.println(reply);
                             }else {
                                 ACLMessage reply = new ACLMessage(ACLMessage.REFUSE);
-                                reply.setContent(getLocalName() + "-" + bidingCatalog.get(j).dictOrder + "-" + 0 + "-" + 0);
+                                //reply.setContent(getLocalName() + "-" + bidingCatalog.get(j).dictOrder + "-" + 0 + "-" + 0);
                                 reply.setConversationId("bidding");
                                 reply.setReplyWith("reply" + System.currentTimeMillis());
                                 reply.addReceiver(sellerList[i]);
@@ -236,7 +254,7 @@ public class randValSealVarieBidder extends Agent {
                         }
                     }
 
-
+                    /***
                     while(sortedListSeller.size() > 0) {
                         Agents tempSortedListSeller = sortedListSeller.get(0);
                         String agentName = tempSortedListSeller.name;
@@ -254,7 +272,7 @@ public class randValSealVarieBidder extends Agent {
                         }
                         sortedListSeller.remove(0);
                     }
-
+                    ***/
 
                     step = 2;
                     break;
@@ -337,20 +355,17 @@ public class randValSealVarieBidder extends Agent {
     }
 
     public class catalogInfo{
-        int dictOrder;
+        String sellerName;
+        String sellerDBName;
         double volume;
-        String winnerName;
-        double winnerVol;
-        double winnerPrice;
-        catalogInfo(int dictOrder, double volume, String winnerName, double winnerVol, double winnerPrice){
-            this.dictOrder = dictOrder;
+        catalogInfo(String sellerName, String sellerDBName, double volume){
+            this.sellerDBName = sellerDBName;
+            this.sellerName = sellerName;
             this.volume = volume;
-            this.winnerName = winnerName;
-            this.winnerVol = winnerVol;
-            this.winnerPrice = winnerPrice;
+
         }
         public String toString() {
-            return "Dict no.: " + this.dictOrder + "  Vol" + this.volume + "   Winner: " + this.winnerName + "  Vol: " + this.winnerVol + "\n";
+            return "Seller name: " + this.sellerName + "  DB name: " + this.sellerDBName + "  Vol" + this.volume + "  Offer Price: " + "\n";
         }
     }
 
@@ -392,27 +407,12 @@ public class randValSealVarieBidder extends Agent {
     }
 
     //adding new class for sorted seller agent data.
-    class Agents {
-        String name;
-        int dictOrderNo;
-        double volume;
 
-        //Constructor
-        public Agents(String name, int dictOrderNo, double volume) {
-            this.name = name;
-            this.dictOrderNo = dictOrderNo;
-            this.volume = volume;
-        }
-
-        public String toString() {
-            return "Agent name: " + this.name + "  " + " Dict order no. : " + this.dictOrderNo + "  " + " Volume: " + this.volume;
-        }
-    }
 
     //Sorted by volume (descending).
-    class SortbyVolume implements Comparator<Agents> {
+    class SortbyVolume implements Comparator<catalogInfo> {
         //Used for sorting in ascending order of the volume.
-        public int compare(Agents a, Agents b) {
+        public int compare(catalogInfo a, catalogInfo b) {
             return Double.compare(a.volume, b.volume);
         }
     }
