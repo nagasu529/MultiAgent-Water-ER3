@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BidderUniformAuction extends Agent {
+public class BidderUniformGreedy extends Agent {
     //The list of farmer who are seller (maps the water volume to its based price)
     FileInput randValue = new FileInput();
     DatabaseConn app = new DatabaseConn();
@@ -34,9 +34,9 @@ public class BidderUniformAuction extends Agent {
     //All behaviour is running on here. It's working on setup price for bidding process.
 
 
-    //Bidding behaviour rules "0" is neutral, "1" is greedy, "2" is mixed behaviours.
+    //Bidding behaviour rules "0" is neutral, "1" is greedy
     int pctPriceReduce = 0;
-    int biddingBehaviourRules = 2;
+    int biddingBehaviourRules = 1;
 
     
     //Import Random
@@ -65,15 +65,9 @@ public class BidderUniformAuction extends Agent {
         //Setting up new price with all new random in percentage.
         if(biddingBehaviourRules == 0){
             pctPriceReduce = 100;
-        }else if(biddingBehaviourRules == 1){
-            //Creating list integer for random reduction percentage.
-            Integer[] arrReducList = new Integer[]{50,60,70,80,90};
-            List<Integer> pctPriceReducList = Arrays.asList(arrReducList);
-            pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
-            farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
         }else {
             //Creating list integer for random reduction percentage.
-            Integer[] arrReducList = new Integer[]{50,60,70,80,90,100};
+            Integer[] arrReducList = new Integer[]{50,60,70,80,90};
             List<Integer> pctPriceReducList = Arrays.asList(arrReducList);
             pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
             farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;

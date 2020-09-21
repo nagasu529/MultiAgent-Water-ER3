@@ -38,8 +38,10 @@ public class SellerUniformAuction extends Agent{
     ArrayList<Agents> replyInfoList = new ArrayList<Agents>();
     ArrayList<Agents> acceptNameList = new ArrayList<>();
     ArrayList<String> output = new ArrayList<String>();
+
+    //Setting behaviour rules: "0" is neutral, "1" is generous, "2" is greedy
     int biddingBehaviourRule = getRandomNumberInRange(0,2);
-    //int biddingBehaviourRule = 0;
+    //int biddingBehaviourRule = 2;
     int concernedFact = 0;
     
     //Selling capacity (Maximum).
@@ -376,8 +378,8 @@ public class SellerUniformAuction extends Agent{
 
                     //Writing the all bidder result calculation side to file.
                     //output file location.
-                    String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
-                    //String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
+                    //String outputFile = "/Users/nagasu/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 		//Macbook
+                    String outputFile = "F:/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv"; 	//Home PC
                     //String outputFile = "C:/Users/chiewchk/OneDrive - Bansomdejchaopraya Rajabhat University/PhD-Lincoln/javaProgram/DBandText/ResultCalculation/" + getLocalName() + ".csv";  	//Office
 
                     try {

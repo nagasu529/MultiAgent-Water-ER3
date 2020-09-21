@@ -33,16 +33,12 @@ public class BidderDiscriminatory extends Agent {
     ArrayList<Agents> refuseNewList = new ArrayList<Agents>();
     //All behaviour is running on here. It's working on setup price for bidding process.
 
-
-
-    //Creating list integer for random reduction percentage.
-    Integer[] arrReducList = new Integer[]{50,60,70,80,90,100};
-    int pctPriceReduce = 0;
-    List<Integer> pctPriceReducList = Arrays.asList(arrReducList);
-
-    
     //Import Random
     Random rand = new Random();
+
+    //Bidding behaviour rules "0" is neutral, "1" is greedy
+    int pctPriceReduce = 0;
+    int biddingBehaviourRules = 0;
     
     int randomNum;
     String winner;
@@ -63,11 +59,16 @@ public class BidderDiscriminatory extends Agent {
 
         //stored the neutral price data before it changed on the randomise behaviour.
         double neutralPrice = farmerInfo.buyingPrice;
-        
-        //Setting up new price with all new random in percentage.
 
-        pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
-        farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
+        if(biddingBehaviourRules == 0){
+            pctPriceReduce = 100;
+        }else {
+            //Creating list integer for random reduction percentage.
+            Integer[] arrReducList = new Integer[]{50,60,70,80,90,100};
+            List<Integer> pctPriceReducList = Arrays.asList(arrReducList);
+            pctPriceReduce = pctPriceReducList.get(rand.nextInt(pctPriceReducList.size()));
+            farmerInfo.buyingPrice = (pctPriceReduce * farmerInfo.buyingPrice)/100;
+        }
 
         String outputPctTypeTwo = String.format("Neutral price is: %s   Covetous is: %s",(df.format(farmerInfo.buyingPrice)),(df.format(neutralPrice)));
         System.out.println(outputPctTypeTwo);
