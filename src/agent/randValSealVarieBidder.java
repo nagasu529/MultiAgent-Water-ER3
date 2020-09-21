@@ -24,7 +24,7 @@ public class randValSealVarieBidder extends Agent {
     DatabaseConn app = new DatabaseConn();
     DecimalFormat df = new DecimalFormat("#.##");
     ArrayList<catalogInfo> sortedListSeller = new ArrayList<catalogInfo>();
-    ArrayList<catalogInfo> proposeSortedList = new ArrayList<catalogInfo>();
+    //ArrayList<catalogInfo> proposeSortedList = new ArrayList<catalogInfo>();
     //ArrayList<catalogInfo> bidingCatalog = new ArrayList<catalogInfo>();
 
 
@@ -145,7 +145,7 @@ public class randValSealVarieBidder extends Agent {
 
                     if (msg != null) {
                         if (msg.getPerformative() == ACLMessage.CFP && msg.getSender().getLocalName().equals("monitor")==false) {
-                            System.out.println(msg);
+                            //System.out.println(msg);
                             replyCnt++;
                             //ACLMessage reply = msg.createReply();
                             //Price Per MM. and the number of volume to sell from Seller.
@@ -153,39 +153,70 @@ public class randValSealVarieBidder extends Agent {
                             String[] arrOfstr = currentOffer.split("-");
 
                             //Print the received message
-                            System.out.println(msg + "\n");
+                            //System.out.println(msg + "\n");
                             String sellerName = msg.getSender().getLocalName();
                             String sellerDBname = arrOfstr[0];
                             double tempSellerFirstVolume = Double.parseDouble(arrOfstr[1]);
                             double tempSellerSecondVolume = Double.parseDouble(arrOfstr[2]);
-                            sortedListSeller.add(new catalogInfo(sellerName, sellerDBname,tempSellerFirstVolume));
-                            sortedListSeller.add(new catalogInfo(sellerName,sellerDBname,tempSellerSecondVolume));
+                            sortedListSeller.add(new catalogInfo(sellerName, sellerDBname,tempSellerFirstVolume,"none"));
+                            sortedListSeller.add(new catalogInfo(sellerName,sellerDBname,tempSellerSecondVolume, "none"));
                         }
 
                         if (replyCnt == sellerList.length) {
                             System.out.println(getLocalName() + "  receive all CFP ");
-                            Collections.sort(sortedListSeller, new SortbyVolume());
-                            Collections.reverse(sortedListSeller);
+                            //Collections.sort(sortedListSeller, new SortbyVolume());
+                            //Collections.reverse(sortedListSeller);
 
                             System.out.println("Sorted List Result which from sellers request:>>>>>>>>>>>>>>>>" + "\n" + getLocalName() + "\n");
                             for (int i = 0; i <= sortedListSeller.size() - 1; i++) {
-                                System.out.println(sortedListSeller.get(i) + "\n");
+                                System.out.println(getAID().getLocalName() + "  " + sortedListSeller.get(i) + "\n");
                             }
 
                             //decision for PROPOSE message sending.
                             System.out.println("\n" + "Decision making starting>>>>>>>");
                             double tempBuyingVol = bidderInfo.buyingVol;
+                            while (tempBuyingVol > 0){
+                                if(tempBuyingVol > 500){
+                                    for(int i =0; i <= sortedListSeller.size() -1; i++){
+                                        if(sortedListSeller.get(i).biddingStatus == "none" && sortedListSeller.get(i).volume >= 500){
+                                            sortedListSeller.get(i).biddingStatus = "propose";
+                                            tempBuyingVol = tempBuyingVol - sortedListSeller.get(i).volume;
+                                        }
+                                    }
+                                }else if(tempBuyingVol > 350){
+                                    for(int i =0; i <= sortedListSeller.size() -1; i++){
+                                        if(sortedListSeller.get(i).biddingStatus == "none" && sortedListSeller.get(i).volume >= 350){
+                                            sortedListSeller.get(i).biddingStatus = "propose";
+                                            tempBuyingVol = tempBuyingVol - sortedListSeller.get(i).volume;
+                                        }
+                                    }
+                                }else {
+                                    Collections.sort(sortedListSeller, new SortbyVolume());
+                                    Collections.reverse(sortedListSeller);
+                                    for(int i = 0; i < sortedListSeller.size() ;i++){
+                                        if(tempBuyingVol > 0 && sortedListSeller.get(i).biddingStatus == "none"){
+                                            sortedListSeller.get(i).biddingStatus = "propose";
+                                            //proposeSortedList.add(sortedListSeller.get(i));
+                                            tempBuyingVol = tempBuyingVol - sortedListSeller.get(i).volume;
+                                        }
+                                    }
+                                }
+                            }
+                            /***
                             for(int i = 0; i < sortedListSeller.size() ;i++){
-                                while(tempBuyingVol > 0){
-                                    proposeSortedList.add(sortedListSeller.get(i));
+                                if(tempBuyingVol > 0){
+                                    sortedListSeller.get(i).biddingStatus = "propose";
+                                    //proposeSortedList.add(sortedListSeller.get(i));
                                     tempBuyingVol = tempBuyingVol - sortedListSeller.get(i).volume;
                                 }
                             }
+                             ***/
 
                             //Verified result.
                             System.out.println("Verified result>>>>>>>>>>>>>>>>>>>>>>>       " + getLocalName() + "\n");
-                            for(int i = 0; i < proposeSortedList.size(); i++){
-                                System.out.println(proposeSortedList.get(i).toString());
+                            for(int i = 0; i < sortedListSeller.size(); i++){
+                                if(sortedListSeller.get(i).biddingStatus == "propose")
+                                System.out.println( getAID().getLocalName() + "  " + getAID().getLocalName() + sortedListSeller.get(i).toString());
                             }
 
                             System.out.println("\n");
@@ -212,7 +243,6 @@ public class randValSealVarieBidder extends Agent {
                                 }
                             }
 
-
                             //Verified result.
                             System.out.println("Verified result>>>>>>>>>>>>>>>>>>>>>>>       " + getLocalName() + "\n");
                             for (int i = 0; i <= bidingCatalog.size() - 1; i++) {
@@ -232,11 +262,11 @@ public class randValSealVarieBidder extends Agent {
                 case 1:
                     //Sending PROPOSE message to Seller (only the best option for volume requirement.
 
-                    for (int i = 0; i < sortedListSeller.size(); i++) {
-                        for (int j = 0; j <= proposeSortedList.size() - 1; j++) {
-                            if (sortedListSeller.get(i).sellerName.equals(proposeSortedList.get(j).sellerName)) {
+                    for (int i = 0; i <= sellerList.length -1; i++) {
+                        for (int j = 0; j <= sortedListSeller.size() - 1; j++) {
+                            if (sortedListSeller.get(i).sellerName.equals(sortedListSeller.get(j).sellerName) && sortedListSeller.get(j).biddingStatus == "propose") {
                                 ACLMessage reply = new ACLMessage(ACLMessage.PROPOSE);
-                                reply.setContent(bidderInfo.farmerName + "-" + proposeSortedList.get(j).volume + "-" + bidderInfo.buyingPrice);
+                                reply.setContent(bidderInfo.farmerName + "-" + sortedListSeller.get(j).volume + "-" + bidderInfo.buyingPrice);
                                 reply.setConversationId("bidding");
                                 reply.setReplyWith("reply" + System.currentTimeMillis());
                                 reply.addReceiver(sellerList[i]);
@@ -358,14 +388,15 @@ public class randValSealVarieBidder extends Agent {
         String sellerName;
         String sellerDBName;
         double volume;
-        catalogInfo(String sellerName, String sellerDBName, double volume){
+        String biddingStatus;
+        catalogInfo(String sellerName, String sellerDBName, double volume, String biddingStatus){
             this.sellerDBName = sellerDBName;
             this.sellerName = sellerName;
             this.volume = volume;
-
+            this.biddingStatus = biddingStatus;
         }
         public String toString() {
-            return "Seller name: " + this.sellerName + "  DB name: " + this.sellerDBName + "  Vol" + this.volume + "  Offer Price: " + "\n";
+            return "Seller name: " + this.sellerName + "  DB name: " + this.sellerDBName + "  Vol" + this.volume + "  Offer Price: " + bidderInfo.buyingPrice + "  Bidding Status: " + this.biddingStatus + "\n";
         }
     }
 

@@ -1,5 +1,4 @@
 package agent;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -12,9 +11,10 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.*;
-
 import calcAuction.FileInput;
 
 public class SingleAgent extends Agent {
@@ -32,9 +32,6 @@ public class SingleAgent extends Agent {
 
     //Farmer information on each agent.
     agentInfo farmerInfo = new agentInfo("", "", 0.0, 10, 0, 0, "avalable", 0.0, 0.0, 10, 10, 0.0, 0);
-
-    //The list of information (buying or selling) from agent which include price and mm^3
-    private HashMap catalogue = new HashMap();
 
     protected void setup(){
         System.out.println(getAID()+" is ready");
@@ -58,7 +55,7 @@ public class SingleAgent extends Agent {
             fe.printStackTrace();
         }
 
-        ArrayList<calcAuction.FileInput.cropType> outputList = new ArrayList<calcAuction.FileInput.cropType>();
+        ArrayList<FileInput.cropType> outputList = new ArrayList<FileInput.cropType>();
 
 
 

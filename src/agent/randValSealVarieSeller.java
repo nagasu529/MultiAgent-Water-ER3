@@ -35,7 +35,7 @@ public class randValSealVarieSeller extends Agent {
     FileInputValidation randValue = new FileInputValidation();
     String log = "";
     int informCnt = 0;
-    int cfpCnt;
+    //int cfpCnt;
 
     String outputFile;
 
@@ -59,7 +59,7 @@ public class randValSealVarieSeller extends Agent {
         if(sellerInfo.sellingVol <= 500){
             sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,200,"none","none",0.0,0.0));
             sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,sellerInfo.sellingVol - 200,"none","none",0.0,0.0));
-        }else if(sellerInfo.sellingVol >500 && sellerInfo.sellingVol <= 1000){
+        }else if (sellerInfo.sellingVol > 500 && sellerInfo.sellingVol < 800){
             sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,350, "none","none",0.0,0.0));
             sellingCatalog.add(new catalogInfo(getLocalName(),sellerInfo.dbName,sellerInfo.sellingVol - 350,"none", "none",0.0,0.0));
         }else {
@@ -141,7 +141,7 @@ public class randValSealVarieSeller extends Agent {
 
 
         //List of reply instance.
-        ArrayList<Agents> bidderReplyList = new ArrayList<>();
+        //ArrayList<Agents> bidderReplyList = new ArrayList<>();
         private int step = 0;
 
         public void action() {
@@ -179,10 +179,14 @@ public class randValSealVarieSeller extends Agent {
                     cfp.setContent((sellingCatalog.get(0).sellerDBName + "-" + sellingCatalog.get(0).volume) + "-" + sellingCatalog.get(1).volume);
                     cfp.setConversationId("bidding");
                     cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
+                    myAgent.send(cfp);
+
+                    /***
                     cfpCnt++;
                     if(cfpCnt <= 1) {
                         myAgent.send(cfp);
                     }
+                     ***/
 
 
 
@@ -210,19 +214,25 @@ public class randValSealVarieSeller extends Agent {
                         // Reply received
                         if (reply.getPerformative() == ACLMessage.PROPOSE) {
                             proposeCnt++;
-                            //myGui.displayUI("Receive message: \n" + reply + "\n");
+                            myGui.displayUI("Receive message: \n" + reply + "\n");
                             //Count number of bidder that is propose message for water price bidding.
                             // This is an offer
                             String biddedFromAcutioneer = reply.getContent();
                             String[] arrOfStr = biddedFromAcutioneer.split("-");
                             String tempBidderName = reply.getSender().getLocalName();
                             String tempNameDB = arrOfStr[0];
-                            int tempDictOrder = Integer.parseInt(arrOfStr[1]);
-                            double tempBidVol = Double.parseDouble(arrOfStr[2]);
-                            double tempBidPrice = Double.parseDouble(arrOfStr[3]);
+                            double tempBidVol = Double.parseDouble(arrOfStr[1]);
+                            double tempBidPrice = Double.parseDouble(arrOfStr[2]);
 
                             //adding data to dictionary, comparing and storing data.
-                            bidderReplyList.add(new Agents(tempBidderName, tempNameDB, tempDictOrder, tempBidVol, tempBidPrice));
+                            for (int i = 0; i <= sellingCatalog.size() - 1; i++){
+                                if(tempBidVol == sellingCatalog.get(i).volume && sellingCatalog.get(i).winnerPrice < tempBidPrice){
+                                    sellingCatalog.get(i).winnerPrice = tempBidPrice;
+                                    sellingCatalog.get(i).winnerName = tempBidderName;
+                                    sellingCatalog.get(i).winnerDBName = tempNameDB;
+                                    sellingCatalog.get(i).winnerVol = tempBidVol;
+                                }
+                            }
                         }else {
                             refuseCnt++;
                         }
@@ -233,14 +243,14 @@ public class randValSealVarieSeller extends Agent {
                         myGui.displayUI("Starting to process: \n");
 
                         if ((replyCnt >= sellingCatalog.size() * bidderAgent.length)) {
-                            Collections.sort(bidderReplyList, new SortbyValue());
-                            Collections.reverse(bidderReplyList);
+                            //Collections.sort(sellingCatalog, new SortbyValue());
+                            //Collections.reverse(bidderReplyList);
 
                             myGui.displayUI("\n" + "Verified result : >>>>>>>>>>>>>>>>>>> \n");
                             myGui.displayUI("Reply msg: " + replyCnt + "  " + "PROPOSE msg : " + proposeCnt + "   " + "REFUSE msg: " + refuseCnt + "\n");
                             //myGui.displayUI("\n" + "bidder reply size:  " + (bidderReplyList.size()) + "\n" + "bidder reply list:" + "\n");
-                            for (int i = 0; i <= bidderReplyList.size() - 1; i++) {
-                                myGui.displayUI("sssssss  " + bidderReplyList.get(i).toString() + "\n");
+                            for (int i = 0; i <= sellingCatalog.size() - 1; i++) {
+                                myGui.displayUI("sssssss  " + sellingCatalog.get(i).toString() + "\n");
                             }
                             myGui.displayUI("\n");
                             step = 2;
@@ -275,6 +285,7 @@ public class randValSealVarieSeller extends Agent {
 
                     //Sorted propose message and matching to reply INFORM Message.
 
+                    /***
                     while (bidderReplyList.size() > 0){
                         if((bidderReplyList.get(0).buyingVol == sellingCatalog.get(0).volume) && (bidderReplyList.get(0).buyingPrice > sellingCatalog.get(0).winnerPrice)){
                             sellingCatalog.get(0).winnerPrice = bidderReplyList.get(0).buyingPrice;
@@ -288,6 +299,7 @@ public class randValSealVarieSeller extends Agent {
                             bidderReplyList.remove(0);
                         }
                     }
+                     ***/
 
                     //Verified result.
                     myGui.displayUI("Verified auction. >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + "\n");
@@ -333,7 +345,7 @@ public class randValSealVarieSeller extends Agent {
 
                     //Sending PROPOSE message to Seller (only the best option for volume requirement.
 
-                    for (int i = 0; i < bidderAgent.length; i++) {
+                    for (int i = 0; i <= bidderAgent.length - 1; i++) {
                         for (int j = 0; j <= sellingCatalog.size() - 1; j++) {
                             if (bidderAgent[i].getLocalName().equals(sellingCatalog.get(j).winnerName)) {
                                 ACLMessage replyToBidder = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);

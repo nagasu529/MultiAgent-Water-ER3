@@ -1,6 +1,7 @@
 package agent;
 
 import calcAuction.FileInput;
+import calcAuction.FileInputValidation;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
