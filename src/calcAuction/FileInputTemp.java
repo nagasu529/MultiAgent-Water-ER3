@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class FileInputValidation extends DatabaseConn {
+public class FileInputTemp extends DatabaseConn {
 	
 	DecimalFormat df = new DecimalFormat("#.##");
 	

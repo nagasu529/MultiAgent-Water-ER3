@@ -1,6 +1,6 @@
 package agent;
 
-import calcAuction.FileInputValidation;
+import calcAuction.FileInputTemp;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -18,7 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import calcAuction.FileInput;
 import database.DatabaseConn;
 
 
@@ -32,7 +31,7 @@ public class randValSealVarieSeller extends Agent {
 
     //General parameters information
     DecimalFormat df = new DecimalFormat("#.##");
-    FileInputValidation randValue = new FileInputValidation();
+    FileInputTemp randValue = new FileInputTemp();
     String log = "";
     int informCnt = 0;
     //int cfpCnt;

@@ -1,7 +1,6 @@
 package agent;
 
-import calcAuction.FileInput;
-import calcAuction.FileInputValidation;
+import calcAuction.FileInputTemp;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -23,7 +22,7 @@ public class ValidationAgent extends Agent {
 
     //The list of farmer who are seller (maps the water volume to its based price)
     private ValidationAgentGui myGui;
-    FileInputValidation calCrops = new FileInputValidation();
+    FileInputTemp calCrops = new FileInputTemp();
     DecimalFormat df = new DecimalFormat("#.##");
 
     //The list of known water selling agent
@@ -60,7 +59,7 @@ public class ValidationAgent extends Agent {
             fe.printStackTrace();
         }
 
-        ArrayList<FileInputValidation.cropType> outputList = new ArrayList<FileInputValidation.cropType>();
+        ArrayList<FileInputTemp.cropType> outputList = new ArrayList<FileInputTemp.cropType>();
 
 
 

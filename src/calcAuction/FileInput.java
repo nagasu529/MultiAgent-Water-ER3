@@ -151,7 +151,7 @@ public class FileInput extends DatabaseConn {
 
 		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed", "White clover", "Kale", "Fodder beet"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Kale", "Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Peanut", "Wheat", "Maize", "Wheat", "Peanut", "Peanut"));
 
 
@@ -359,33 +359,37 @@ public class FileInput extends DatabaseConn {
 		String log = "";
 
 		switch (decisionMethod) {
-			case '0':
+			case 0:
 				//Decision-1 CV value is the first priority.
 				log = log + "The first priority is crop value";
-				cropEU = (cvValue * 0.5) + (dsValue * 0.25) + (stValue * 0.25);
+				for (int i = 0; i <=inputArrayList.size() - 1; i++){
+					inputArrayList.get(i).cropEU = (inputArrayList.get(i).cvValue * 0.5) + (inputArrayList.get(i).dsValue * 0.25) + (inputArrayList.get(i).stValue * 0.25);
+				}
 				Collections.sort(inputArrayList, new SortbyEU());
-				Collections.reverse(inputArrayList);
 				break;
-			case '1':
+			case 1:
 				//Second decision: The Drought sensitivity.
 				log = log + "The first priority is crop drought sensitivity";
-				cropEU = (cvValue * 0.25) + (dsValue * 0.5) + (stValue * 0.25);
+				for (int i = 0; i <=inputArrayList.size() - 1; i++){
+					inputArrayList.get(i).cropEU = (inputArrayList.get(i).cvValue * 0.25) + (inputArrayList.get(i).dsValue * 0.5) + (inputArrayList.get(i).stValue * 0.25);
+				}
 				Collections.sort(inputArrayList, new SortbyEU());
-				Collections.reverse(inputArrayList);
 				break;
-			case '3':
+			case 2:
 				//Third decision: Soil moisture factors.
 				log = log + "the first priority is soil moisture level";
-				cropEU = (cvValue * 0.25) + (dsValue * 0.25) + (stValue * 0.5);
+				for (int i = 0; i <=inputArrayList.size() - 1; i++){
+					inputArrayList.get(i).cropEU = (inputArrayList.get(i).cvValue * 0.25) + (inputArrayList.get(i).dsValue * 0.25) + (inputArrayList.get(i).stValue * 0.5);
+				}
 				Collections.sort(inputArrayList, new SortbyEU());
-				Collections.reverse(inputArrayList);
 				break;
-			case '4':
+			case 3:
 				//Special decision: Pasture only which not concern about productivity factor.
 				log = log + "Soil type and soil moisture level are the same priority";
-				cropEU = (cvValue * 0) + (dsValue * 0.5) + (stValue * 0.5);
+				for (int i = 0; i <=inputArrayList.size() - 1; i++){
+					inputArrayList.get(i).cropEU = (inputArrayList.get(i).cvValue * 0) + (inputArrayList.get(i).dsValue * 0.5) + (inputArrayList.get(i).stValue * 0.5);
+				}
 				Collections.sort(inputArrayList, new SortbyEU());
-				Collections.reverse(inputArrayList);
 			default:
 				log = log = "the first priority is Crop stage";
 				Collections.sort(inputArrayList, new SortbyCropStage());
@@ -608,8 +612,24 @@ public class FileInput extends DatabaseConn {
 
 
 		public String toStringValidation() {
-			String tempValidationTxt = "";
-			return "Order: " + this.order + " Crop name: " + this.cropName + "  CVvalue: " + df.format(this.cvValue) + "Soil type: " + df.format(this.soilType) + "  STvalue: " + df.format(this.stValue) + " Drought Sensitivity: " + df.format(this.droughtSensitivity) + "  DSValue: " + df.format(this.dsValue);
+			String soilTypeText = "";
+			String droughtTxt = "";
+			if(this.soilType == 1){
+				soilTypeText = "Light";
+			}else if(this.soilType == 2){
+				soilTypeText = "Medium";
+			}else {
+				soilTypeText = "Heavy";
+			}
+
+			if(this.droughtSensitivity == 1){
+				droughtTxt ="Low";
+			}else if(droughtSensitivity == 2){
+				droughtTxt = "Medium";
+			}else {
+				droughtTxt = "High";
+			}
+			return "Order: " + this.order + " Crop name: " + this.cropName + "  CropEU: " + df.format(this.cropEU) + "  CVvalue: " + df.format(this.cvValue) + " Soil type: " + soilTypeText + "  STvalue: " + df.format(this.stValue) + " Drought Sensitivity: " + droughtTxt + "  DSValue: " + df.format(this.dsValue) ;
 		}
 	}
 
