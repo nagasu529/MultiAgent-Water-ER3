@@ -151,7 +151,7 @@ public class FileInput extends DatabaseConn {
 
 		//all crops without pasture.
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Pea (field)", "Maize", "Wheat", "Barley", "Pea (vining)", "Oil seed", "Hybrid carrot seed", "White clover", "Kale", "Fodder beet"));
-		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Barley", "Oil seed", "Peanut"));
+		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Barley", "Oil seed", "Peanut","Pea (field)"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Peanut", "Wheat", "Maize", "Wheat", "Peanut", "Peanut"));
 
 
@@ -163,14 +163,14 @@ public class FileInput extends DatabaseConn {
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Barley", "White clover", "Perennial ryegrass", "Pea (field)", "Kale", "Fodder beet", "Hybrid carrot seed", "Maize", "Pea (vining)", "Oil seed"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Wheat", "Maize", "Peanut", "Oil seed", "Pasture", "Pasture"));
 		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("White clover", "Maize", "Barley", "Pasture", "Perennial ryegrass"));
-		ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Oil seed", "Pasture", "Pasture"));
+		//ArrayList<String> cropNameGen = new ArrayList<String>(Arrays.asList("Maize", "Wheat", "Oil seed", "Pasture", "Pasture"));
 
 
 		List<String> irrigationTypeGen = Arrays.asList("Sprinkler", "Basin", "Border", "Furrow", "Trickle");
 		List<String> cropStageGenText = Arrays.asList("", "Germination", "Development", "Flowering", "Ripening");
 
 		//Getting farm name and water consent information.
-		int numberOfElements = 5;
+		int numberOfElements = 6;
 
 		//farmName = farmerNameGen.get(rand.nextInt(farmerNameGen.size()));
 		//waterConsentCost = getRandDoubleRange(10000, 20000);
@@ -184,6 +184,8 @@ public class FileInput extends DatabaseConn {
 
 			//Crop stage loop function
 			//cropStage = getRandIntRange(1, 4);
+
+			/***
 			if (cropName == "Pasture") {
 				//cropStage = getRandIntRange(0, 2);
 
@@ -198,6 +200,16 @@ public class FileInput extends DatabaseConn {
 				if (i >= 4) {
 					cropStage = getRandIntRange(1, 4);
 				}
+			}
+			 ***/
+			if(cropName =="Pea (field)"){
+				cropStage = 1;
+			}else if(cropName =="Maize" ||cropName == "Wheat"||cropName == "Oil seed"){
+				cropStage = 2;
+			}else if(cropName == "Peanut"){
+				cropStage = 3;
+			}else if(cropName == "Barley"){
+				cropStage = 4;
 			}
 
 			//droughtSensitivity = 3;
